@@ -2,1084 +2,1600 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BETCAM | Simulateur Expert V64 (Maquette Full)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BETCAM | Expertise VRADE & Décision</title>
     
-    <!-- Bibliothèques -->
+    <!-- Bibliothèques Externes -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #f1f5f9; 
-            -webkit-tap-highlight-color: transparent;
-            font-size: 14px;
+            background-color: #f1f3f6; 
         }
         
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
         }
-
-        .input-field {
-            transition: all 0.2s;
-            border: 1px solid #cbd5e1;
-            font-size: 14px !important;
-            color: #0f172a;
-            font-weight: 600;
-        }
-        .input-field::placeholder { color: #94a3b8; font-weight: 400; }
-        .input-field:focus { border-color: #1e3a8a; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); outline: none; }
-
-        /* Textarea spécifique */
-        textarea.input-field { resize: vertical; min-height: 80px; line-height: 1.5; }
-
-        /* Mode Édition Actif */
-        .editing-mode-border { border: 2px solid #f59e0b !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
-
-        .sticky-header-main { position: sticky; top: 0; z-index: 100; background-color: #f1f5f9; padding: 0.5rem 0; }
-        thead th { position: sticky; top: 0; z-index: 30; background-color: #f8fafc; box-shadow: inset 0 -1px 0 #e2e8f0; }
-        .sticky-col { position: sticky; left: 0; z-index: 20; background-color: white; box-shadow: 2px 0 5px -2px rgba(0,0,0,0.05); }
-        thead th.sticky-col { z-index: 40; background-color: #f8fafc; }
-
-        .table-container { height: calc(100vh - 240px); min-height: 500px; overflow: auto; }
-        .card-title { font-size: 15px; font-weight: 800; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.05em; }
-        .form-label { font-size: 11px; text-transform: uppercase; font-weight: 800; color: #334155; margin-bottom: 4px; display: block; letter-spacing: 0.02em; }
-
-        #custom_suggestions { max-height: 200px; overflow-y: auto; z-index: 1000; }
-        .suggestion-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 14px; color: #1e293b; font-weight: 500; }
-        .suggestion-item:hover { background-color: #eff6ff; }
         
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
-        .toast { background: #1e293b; color: white; padding: 12px 24px; border-radius: 8px; margin-top: 10px; font-size: 13px; font-weight: 600; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .pro-shadow { 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); 
+        }
 
-        #pdf-template-source { position: absolute; left: -9999px; width: 210mm; background: white; box-sizing: border-box; }
+        .input-focus:focus { 
+            border-color: #1e3a8a; /* Blue-900 focus */
+            ring: 4px; 
+            ring-color: rgba(30, 58, 138, 0.1); 
+        }
 
-        .choc-grid { display: grid; grid-template-columns: 1fr 1.5fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 6px; background: #f8fafc; padding: 8px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        .choc-zone { background: white; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 8px 2px; text-align: center; font-size: 10px; font-weight: 800; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; color: #475569; }
-        .choc-zone:hover { border-color: #94a3b8; background-color: #f1f5f9; }
-        .choc-zone.active { background: #1e3a8a; color: white; border-color: #1e3a8a; box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2); }
+        .font-mono-num { 
+            font-variant-numeric: tabular-nums; 
+            letter-spacing: -0.02em;
+        }
 
-        .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .seniority-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 8px 12px -3px rgba(16, 185, 129, 0.15);
+        }
 
-        #preview-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(5px); }
-        #preview-content-scroll { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-        #preview-paper { width: 210mm; min-height: 297mm; background: white; box-shadow: 0 0 50px rgba(0,0,0,0.5); margin: 20px auto; transform-origin: top center; box-sizing: border-box; }
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            background: #1e3a8a; /* Blue-900 */
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px -4px rgba(30, 58, 138, 0.4);
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .decision-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Toggle Checkbox Style */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #68D391;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #68D391;
+        }
+        
+        .hidden-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .visible-section {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        html { scroll-behavior: smooth; }
+
+        /* Styles spécifiques au PDF caché */
+        #pdf-export-template {
+            display: none; /* Caché par défaut */
+            background: white;
+            color: black;
+            padding: 30px;
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Overlay de chargement propre */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f1f3f6; /* Même couleur que le fond */
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
         @media print {
-            body * { visibility: hidden; }
-            #pdf-template-source, #pdf-template-source * { visibility: visible; }
-            #pdf-template-source { position: absolute; left: 0; top: 0; width: 210mm !important; margin: 0; padding: 10mm !important; box-sizing: border-box; }
-            .no-print, #preview-modal { display: none !important; }
-            @page { margin: 0; size: A4 portrait; }
+            .no-print { display: none; }
+        }
+        
+        /* Custom Slider */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #1e3a8a;
+            cursor: pointer;
+            margin-top: -10px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        /* Checkbox list style */
+        .checkbox-item {
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .checkbox-item:hover {
+            background-color: #fef2f2; /* Default red hover */
+        }
+        .checkbox-item-eco:hover {
+            background-color: #fff7ed; /* Orange hover for eco */
         }
     </style>
 </head>
-<body class="text-slate-800 p-2 md:p-6 min-h-screen relative" oninput="saveDataDebounced()">
+<body class="text-slate-800 antialiased p-4 md:p-8 bg-slate-100">
 
-    <div class="max-w-7xl mx-auto space-y-5">
-        
-        <!-- ENTETE -->
-        <div class="sticky-header-main no-print">
-            <div class="glass-panel p-4 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 border border-slate-200">
-                <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 bg-indigo-700 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg relative">
-                        <i class="fa-solid fa-file-invoice"></i>
-                        <div id="save-indicator" class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white hidden" title="Sauvegardé"></div>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-black text-slate-900 leading-tight">BETCAM Intelligence</h1>
-                        <p class="text-xs text-slate-500 uppercase font-bold tracking-widest">Expertise V64 • Maquette Full</p>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button type="button" onclick="clearPartsOnly()" class="px-5 py-2.5 text-rose-600 text-xs font-bold bg-rose-50 rounded-xl hover:bg-rose-100 transition-all border border-rose-200">
-                        <i class="fa-solid fa-eraser mr-2"></i> Vider Tableau
-                    </button>
-                    <button type="button" onclick="resetApp()" class="px-5 py-2.5 text-slate-600 text-xs font-bold bg-slate-100 rounded-xl hover:bg-slate-200 transition-all border border-slate-200">
-                        <i class="fa-solid fa-rotate-right mr-2"></i> Nouveau Dossier
-                    </button>
-                    <button type="button" onclick="openPreview()" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black shadow-lg hover:bg-indigo-700 transition-all">
-                        <i class="fa-solid fa-eye mr-2"></i> APERÇU / PDF
-                    </button>
-                </div>
-            </div>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="text-blue-900 text-4xl mb-4">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
         </div>
+        <p class="text-blue-900 font-bold uppercase tracking-widest text-sm">Génération du PDF...</p>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            
-            <!-- COLONNE GAUCHE (INPUTS) -->
-            <div class="lg:col-span-4 space-y-5 no-print" id="form_container">
-                
-                <!-- 1. Identification du dossier -->
-                <div class="glass-panel p-6 rounded-2xl border-l-4 border-slate-400">
-                    <h2 class="card-title mb-5 flex items-center gap-2 text-slate-700"><i class="fa-solid fa-folder-open"></i> Identification du dossier</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Réf. Dossier</label>
-                            <input type="text" id="ref_dossier" placeholder="EX: 4011/25 - ATS" class="w-full p-2.5 rounded-lg bg-white input-field uppercase tracking-wide">
-                        </div>
-                        <div>
-                            <label class="form-label">Date Mission</label>
-                            <input type="date" id="date_mission" class="w-full p-2.5 rounded-lg bg-white input-field">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Requérant</label>
-                        <input type="text" id="requerant" placeholder="EX: TOULAL ASSURANCE" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Compagnie</label>
-                        <input type="text" id="cie_assurance" placeholder="EX: ATLANTASANAD" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
-                    <div>
-                        <label class="form-label">Nom de l'Assuré</label>
-                        <input type="text" id="assure_name" placeholder="" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
+    <!-- Ajout de l'ID app-wrapper pour le masquage lors de l'export -->
+    <div id="app-wrapper" class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-5 rounded-[2rem] shadow-sm border border-white/40">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="logo-box flex-shrink-0">
+                    <!-- LOGO SVG (Bouclier Expertise) -->
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
                 </div>
-
-                <!-- 2. VÉHICULE -->
-                <div class="glass-panel p-6 rounded-2xl border-l-4 border-indigo-600">
-                    <h2 class="card-title mb-5 flex items-center gap-2 text-indigo-800"><i class="fa-solid fa-car"></i> Véhicule</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Immatriculation</label>
-                            <input type="text" id="ref_immat" placeholder="00987-A-20" class="w-full p-2.5 rounded-lg bg-white input-field uppercase tracking-wide text-center">
-                        </div>
-                        <div>
-                            <label class="form-label">M.E.C</label>
-                            <input type="date" id="date_mec" class="w-full p-2.5 rounded-lg bg-white input-field" onchange="calcAge()">
-                        </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold text-blue-900 tracking-tight leading-none mb-1">Cabinet D'expertise <span class="font-extrabold">BETCAM</span></h1>
+                    <div class="text-blue-900/70 text-[10px] font-bold tracking-widest uppercase leading-snug">
+                        Bureau d'Etudes Techniques - Expertises<br>et Conseils Automobiles et Machines Agricoles
                     </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Marque</label>
-                            <select id="veh_make" class="w-full p-2.5 rounded-lg bg-white input-field" onchange="updateModels()"><option value="">-- Choisir --</option></select>
-                        </div>
-                        <div>
-                            <label class="form-label">Modèle</label>
-                            <select id="veh_model" class="w-full p-2.5 rounded-lg bg-white input-field"><option value="">-- Modèle --</option></select>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Genre</label>
-                            <input type="text" id="veh_genre" placeholder="EX: C.I" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                        </div>
-                        <div>
-                            <label class="form-label">Puissance</label>
-                            <input type="text" id="veh_puissance" placeholder="EX: 07 CV" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">N° du Châssis</label>
-                        <input type="text" id="veh_chassis" placeholder="NUMÉRO DE CHÂSSIS" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
-                    <div>
-                        <label class="form-label">Carburant</label>
-                        <select id="veh_carburant" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                            <option value="DIESEL">DIESEL</option>
-                            <option value="ESSENCE">ESSENCE</option>
-                            <option value="HYBRIDE">HYBRIDE</option>
-                            <option value="ELECTRIQUE">ELECTRIQUE</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- 3. SINISTRE (Reorganisé selon maquette) -->
-                <div class="glass-panel p-6 rounded-2xl border-l-4 border-rose-500">
-                    <h2 class="card-title mb-5 flex items-center gap-2 text-rose-800"><i class="fa-solid fa-triangle-exclamation"></i> Sinistre</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Date Sinistre</label>
-                            <input type="date" id="date_sinistre" class="w-full p-2.5 rounded-lg bg-white input-field font-bold text-rose-700" onchange="calcAge()">
-                        </div>
-                        <div>
-                            <label class="form-label">Date Visite</label>
-                            <input type="date" id="date_visite" class="w-full p-2.5 rounded-lg bg-white input-field font-bold">
-                        </div>
-                    </div>
-                    
-                    <!-- Identification du dossier cachée mais nécessaire pour les logs -->
-                    <div class="mb-4">
-                        <label class="form-label">N° Sinistre</label>
-                        <input type="text" id="ref_sinistre" placeholder="S/R..." class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Kilométrage</label>
-                            <input type="text" id="veh_km" placeholder="KM" class="w-full p-2.5 rounded-lg bg-white input-field font-bold">
-                        </div>
-                        <div>
-                            <label class="form-label">Pneus</label>
-                            <input type="text" id="veh_pneus" placeholder="AV 30% / AR 30%" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="form-label">État Général</label>
-                        <input type="text" id="veh_etat" placeholder="EX: NORMAL" class="w-full p-2.5 rounded-lg bg-white input-field uppercase">
-                    </div>
-
-                    <!-- CHOC (Graphique) -->
-                    <div class="mb-4">
-                        <label class="form-label flex justify-between items-end">
-                            <span>Point de Choc</span>
-                            <span class="text-[10px] text-slate-400 font-normal">SÉLECTION VISUELLE</span>
-                        </label>
-                        <div class="choc-selector-wrap mt-2">
-                            <div class="choc-grid">
-                                <div class="choc-zone text-slate-600" onclick="toggleChoc('AR. GAUCHE', this)">AR. G</div>
-                                <div class="choc-zone bg-slate-50 border-slate-200 text-slate-500" onclick="toggleChoc('LATÉRAL GAUCHE', this)">LAT. G</div>
-                                <div class="choc-zone text-slate-600" onclick="toggleChoc('AV. GAUCHE', this)">AV. G</div>
-                                <div class="choc-zone" onclick="toggleChoc('ARRIERE', this)">ARRIERE</div>
-                                <div class="flex items-center justify-center relative group cursor-pointer" onclick="toggleChoc('DESSUS', this)">
-                                    <i class="fa-solid fa-car-side text-5xl text-slate-300 group-hover:text-indigo-500 transition-colors"></i>
-                                </div>
-                                <div class="choc-zone" onclick="toggleChoc('AVANT', this)">AVANT</div>
-                                <div class="choc-zone text-slate-600" onclick="toggleChoc('AR. DROITE', this)">AR. D</div>
-                                <div class="choc-zone bg-slate-50 border-slate-200 text-slate-500" onclick="toggleChoc('LATÉRAL DROIT', this)">LAT. D</div>
-                                <div class="choc-zone text-slate-600" onclick="toggleChoc('AV. DROITE', this)">AV. D</div>
-                            </div>
-                            <div class="mt-2 text-center">
-                                <button type="button" class="w-full py-1.5 rounded border border-slate-300 bg-white text-[10px] font-bold text-slate-600 hover:bg-slate-50" onclick="toggleChoc('360° / GLOBAL', this)">360° / GLOBAL</button>
-                            </div>
-                        </div>
-                        <input type="hidden" id="veh_choc_value">
-                        <p id="choc_display_ui" class="text-xs font-black text-indigo-700 mt-1 text-center uppercase tracking-tighter">Aucune zone</p>
-                    </div>
-
-                    <!-- AGE (Intégré dans Sinistre) -->
-                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 mb-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-indigo-800">ÂGE APPLIQUÉ :</span>
-                            <span id="display_age" class="text-base font-black text-indigo-700 uppercase">--</span>
-                        </div>
-                        <div id="detailed_duration" class="text-[10px] text-indigo-500 italic text-right mt-1">Calcul via M.E.C</div>
-                        <input type="hidden" id="calculated_year" value="1">
-                    </div>
-                    
-                    <div>
-                        <label class="form-label">Catégorie Vétusté</label>
-                        <select id="cat_vehicule" class="w-full p-2.5 rounded-lg bg-white border border-slate-300 font-bold text-sm" onchange="calcAge()">
-                            <option value="A">Catégorie A (Véh. Tourisme)</option>
-                            <option value="B">Catégorie B (Véh. Utilitaire/PL)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- BLOC RÉFORME -->
-                <div class="glass-panel p-6 rounded-2xl border-l-4 border-emerald-500">
-                    <h2 class="card-title mb-4 text-emerald-800" style="font-size: 13px;">Évaluation de Réforme</h2>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="form-label">Valeur Vénale</label>
-                            <input type="number" id="val_venale" placeholder="18000" class="w-full p-2.5 rounded-lg bg-white input-field font-bold text-emerald-700" oninput="updateIndemnite()">
-                        </div>
-                        <div>
-                            <label class="form-label">Valeur Épave</label>
-                            <input type="number" id="val_epave" placeholder="7000" class="w-full p-2.5 rounded-lg bg-white input-field font-bold text-rose-700" oninput="updateIndemnite()">
-                        </div>
-                    </div>
-                    <div class="pt-3 border-t border-emerald-100 flex justify-between items-center">
-                        <span class="text-[11px] font-black uppercase text-emerald-800">Net à dire</span>
-                        <span id="indemnite_display" class="text-xl font-black text-emerald-600">0,00 DH</span>
-                    </div>
-                </div>
-
-                <!-- BLOC OBSERVATIONS -->
-                <div class="glass-panel p-6 rounded-2xl border-l-4 border-slate-700">
-                    <h2 class="card-title mb-4 text-slate-800" style="font-size: 13px;">Observations & Conclusions</h2>
-                    <textarea id="expert_obs" class="w-full p-3 rounded-lg bg-white input-field text-sm" placeholder="Rédigez ici vos observations..."></textarea>
                 </div>
             </div>
-
-            <!-- COLONNE DROITE (AJOUT & TABLEAU) -->
-            <div class="lg:col-span-8 space-y-5">
+            
+            <!-- Boutons Actions -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end no-print">
+                <button onclick="window.location.reload()" class="h-10 w-10 flex items-center justify-center bg-white text-blue-900 border border-blue-200 rounded-xl hover:bg-blue-50 transition-all" title="Réinitialiser">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
                 
-                <!-- BLOC AJOUT / EDITION -->
-                <div id="piece_form_card" class="glass-panel p-6 rounded-2xl border-t-4 border-indigo-500 shadow-xl transition-all duration-300">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="card-title text-lg" id="form_title">Nouvel Article</h2>
-                        <button type="button" id="btn_cancel_edit" onclick="cancelEdit()" class="hidden text-xs text-rose-500 font-bold hover:underline bg-rose-50 px-2 py-1 rounded"><i class="fa-solid fa-xmark"></i> Annuler</button>
-                    </div>
+                <button onclick="downloadExpertisePDF()" class="h-10 px-5 bg-blue-900 text-white rounded-xl text-xs md:text-sm font-bold hover:bg-blue-950 transition-all flex items-center gap-2 shadow-md shadow-blue-200">
+                    <i class="fa-solid fa-file-pdf"></i> <span>Télécharger le PDF</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Parameters Sidebar (Saisie) -->
+            <div class="lg:col-span-4 space-y-5 no-print">
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-5">
+                    <h2 class="text-sm font-bold text-blue-900 uppercase tracking-[0.2em] mb-2 text-center border-b border-blue-50 pb-3">Données du Dossier</h2>
                     
-                    <div class="space-y-5">
-                        <input type="hidden" id="edit_part_id" value="">
+                    <div class="space-y-4">
+                        
+                        <!-- Reference Dossier & N Sinistre -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Référence Dossier</label>
+                                <input type="text" id="v_ref" placeholder="Ex: 26/001/A" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">N° Sinistre</label>
+                                <input type="text" id="v_num_sinistre" placeholder="Ex: 100/2026" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- Nom Assuré -->
+                        <div>
+                            <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Nom de l'Assuré</label>
+                            <input type="text" id="v_nom_assure" placeholder="Nom Prénom / Société" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                        </div>
+
+                        <!-- Compagnie d'Assurance (NOUVEAU) -->
+                        <div>
+                            <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Compagnie d'Assurance</label>
+                            <input type="text" id="v_cie_assurance" placeholder="Ex: AXA / Wafa / RMA..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                        </div>
+
+                        <!-- Marque & Immatriculation -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Marque / Modèle</label>
+                                <input type="text" id="v_marque_modele" placeholder="Ex: Renault Clio" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Immatriculation</label>
+                                <input type="text" id="v_mat" placeholder="Ex: 12345-A-1" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- BLOC ENCADRÉ DATES (CHRONOLOGIE) -->
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 relative">
+                            <div class="absolute -top-2 left-3 bg-white px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest border border-slate-100 rounded">Chronologie</div>
+                            <div class="grid grid-cols-2 gap-4 mb-3 mt-1">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date MEC</label>
+                                    <input type="date" id="v_dmec" value="2016-11-07" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date Sinistre</label>
+                                    <input type="date" id="v_sinistre" value="2026-02-01" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3">
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date de l'Expertise</label>
+                                <input type="date" id="v_date_expertise" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700">
+                            </div>
+                        </div>
+
+                        <!-- BLOC ENCADRÉ FINANCIER -->
+                        <div class="bg-blue-50/40 p-4 rounded-2xl border border-blue-100 relative">
+                            <div class="absolute -top-2 left-3 bg-white px-2 text-[9px] font-bold text-blue-400 uppercase tracking-widest border border-blue-100 rounded">Données Financières</div>
+                            
+                            <div class="mt-2 mb-4">
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1">Valeur à Neuf / Facture (Dhs)</label>
+                                <input type="text" id="v_valeur_display" placeholder="Saisir montant..." class="w-full p-2.5 bg-white border border-blue-200 rounded-xl input-focus outline-none font-bold text-sm text-slate-900 placeholder-slate-300" 
+                                       oninput="updateVrade();" 
+                                       onblur="finalizeFormat(this, 'v_valeur_raw')"
+                                       onkeydown="handleEnter(event, this)">
+                                <input type="hidden" id="v_valeur_raw" value="0">
+                            </div>
+
+                            <div class="border-t border-blue-200/50 pt-4 space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1">Montant du Devis (Dhs)</label>
+                                    <input type="text" id="v_devis_display" placeholder="Saisir montant..." class="w-full p-2.5 bg-white border border-blue-200 rounded-xl input-focus outline-none font-bold text-sm text-blue-900 placeholder-blue-300" 
+                                           oninput="updateVrade();" 
+                                           onblur="finalizeFormat(this, 'v_devis_raw')"
+                                           onkeydown="handleEnter(event, this)">
+                                    <input type="hidden" id="v_devis_raw" value="0">
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-[10px] font-bold text-emerald-800 uppercase tracking-widest">Accord sur Devis (Dhs)</label>
+                                        <span class="text-[8px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded font-bold border border-emerald-200">OPTIONNEL</span>
+                                    </div>
+                                    <input type="text" id="v_accord_display" placeholder="Saisir accord..." class="w-full p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl input-focus outline-none font-bold text-sm text-emerald-700 placeholder-emerald-300" 
+                                           oninput="updateVrade();" 
+                                           onblur="finalizeFormat(this, 'v_accord_raw')"
+                                           onkeydown="handleEnter(event, this)">
+                                    <input type="hidden" id="v_accord_raw" value="0">
+                                </div>
+                            </div>
+                        </div>
 
                         <div>
-                            <label class="form-label">Catégorie</label>
-                            <select id="part_type" class="w-full p-3 rounded-lg bg-white input-field font-bold" onchange="toggleFormContext()">
-                                <option value="CARROSSERIE">CARROSSERIE</option>
-                                <option value="MECANIQUE">MÉCANIQUE</option>
-                                <option value="USURE">PIÈCES D'USURE</option>
-                                <option value="MAIN_DOEUVRE">MAIN D'ŒUVRE</option>
+                            <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Catégorie</label>
+                            <select id="v_cat" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium appearance-none cursor-pointer text-slate-700" onchange="updateVrade()">
+                                <optgroup label="Véhicules Légers">
+                                    <option value="PP/Non Utilitaire" selected>VH Particulier / Non Utilitaire</option>
+                                    <option value="Location/Utilitaire">VH Location / Utilitaire</option>
+                                </optgroup>
+                                <optgroup label="Poids Lourds & Chantier">
+                                    <option value="Semi-Remorque">Semi-Remorque (Tracteur)</option>
+                                    <option value="Bus et Camions">Bus et Camions</option>
+                                    <option value="Engins/Agricole">Engins de Chantier / Agricole</option>
+                                </optgroup>
+                                <optgroup label="Autres">
+                                    <option value="Motocycle">Motocycle</option>
+                                </optgroup>
                             </select>
                         </div>
 
-                        <div class="relative">
-                            <label class="form-label">Désignation</label>
-                            <input type="text" id="part_name" placeholder="Rechercher une pièce..." class="w-full p-3 rounded-lg bg-white input-field font-semibold" onfocus="showSuggestions()" oninput="filterSuggestions()">
-                            <ul id="custom_suggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 shadow-2xl rounded-lg overflow-hidden max-h-60"></ul>
-                        </div>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div class="col-span-2">
-                                <label id="price_field_label" class="form-label">Prix Unit. HT</label>
-                                <input type="number" id="part_price" placeholder="0,00" class="w-full p-3 rounded-lg bg-white input-field font-black text-xl text-slate-800" onkeyup="if(event.key === 'Enter') addOrUpdatePart()">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Puissance (CV)</label>
+                                <input type="number" id="v_pf" value="6" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none font-medium text-sm text-slate-700" oninput="updateVrade()">
                             </div>
                             <div>
-                                <label class="form-label text-center">Qté</label>
-                                <input type="number" id="part_qty" value="1" min="1" class="w-full p-3 rounded-lg bg-white input-field font-bold text-center text-lg">
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Carburant</label>
+                                <select id="v_carb" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium cursor-pointer text-slate-700" onchange="updateVrade()">
+                                    <option value="Diesel" selected>Diesel</option>
+                                    <option value="Essence">Essence</option>
+                                </select>
                             </div>
                         </div>
-                        <div id="piece_specs_container" class="space-y-4">
-                            <label class="form-label">Origine de la pièce</label>
-                            <div class="flex gap-2">
-                                <input type="radio" name="part_source" id="src_orig" value="ORIGINE" class="peer hidden" checked onchange="handleSourceChange()">
-                                <label for="src_orig" class="flex-1 text-center p-3 bg-white border border-slate-300 rounded-lg cursor-pointer text-[11px] font-bold peer-checked:bg-blue-800 peer-checked:text-white peer-checked:border-blue-800 uppercase transition-all shadow-sm">Origine</label>
-                                
-                                <input type="radio" name="part_source" id="src_adapt" value="ADAPTABLE" class="peer hidden" onchange="handleSourceChange()">
-                                <label for="src_adapt" class="flex-1 text-center p-3 bg-white border border-slate-300 rounded-lg cursor-pointer text-[11px] font-bold peer-checked:bg-emerald-700 peer-checked:text-white peer-checked:border-emerald-700 uppercase transition-all shadow-sm">Adapt.</label>
-                                
-                                <input type="radio" name="part_source" id="src_recup" value="RECUPERABLE" class="peer hidden" onchange="handleSourceChange()">
-                                <label for="src_recup" class="flex-1 text-center p-3 bg-white border border-slate-300 rounded-lg cursor-pointer text-[11px] font-bold peer-checked:bg-amber-600 peer-checked:text-white peer-checked:border-amber-600 uppercase transition-all shadow-sm">Occas.</label>
-                            </div>
-                            <div id="rate_container" class="p-4 bg-slate-100 rounded-xl border border-dashed border-slate-300">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[11px] font-bold text-slate-500 uppercase">Vétusté Suggérée</span>
-                                    <span id="matrix_val" class="text-base font-black text-indigo-700">0%</span>
+
+                        <!-- SECTION CRITÈRES DE RÉFORME TECHNIQUE (CHOIX MULTIPLE) -->
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="bg-red-50 p-4 rounded-2xl border border-red-100">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label for="chk_tech_reform" class="text-[10px] font-bold text-red-700 uppercase tracking-widest cursor-pointer select-none">Véhicule Techniquement Irréparable ?</label>
+                                    <input type="checkbox" id="chk_tech_reform" class="w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500 cursor-pointer" onchange="toggleTechReason()">
                                 </div>
-                                <input type="number" id="manual_rate" class="w-full p-2.5 text-center font-bold bg-white rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-200" placeholder="Forcer le taux %">
+                                
+                                <div id="tech_reason_container" class="hidden-section mt-2">
+                                    <label class="block text-[10px] font-bold text-red-400 uppercase tracking-widest mb-2 ml-1">Motifs (Choix Multiples)</label>
+                                    
+                                    <div class="bg-white border border-red-200 rounded-xl p-3 space-y-1 text-xs text-red-900">
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Véhicule intégralement calciné" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Véhicule intégralement calciné</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Immersion totale (Inondation)" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Immersion totale (Inondation)</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Géométrie impossible à rétablir" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Géométrie impossible à rétablir</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Structure porteuse gravement endommagée" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Structure porteuse gravement endommagée</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Déformation des longerons ou du châssis" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Déformation des longerons ou du châssis</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Défaillance des systèmes de sécurité" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Défaillance des systèmes de sécurité</span>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" name="tech_reason" value="Numéro de série (VIN) illisible ou absent" class="mt-0.5 rounded text-red-600 focus:ring-red-500" onchange="updateVrade()">
+                                            <span>Numéro de série (VIN) illisible ou absent</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button type="button" id="btn_action_part" onclick="addOrUpdatePart()" class="w-full py-4 bg-indigo-700 text-white rounded-xl text-sm font-black shadow-lg uppercase tracking-widest hover:bg-indigo-800 active:scale-95 transition-all">
-                            <i class="fa-solid fa-plus mr-2"></i> Ajouter au tableau
-                        </button>
+
+                         <!-- SECTION CRITÈRES DE RÉFORME ÉCONOMIQUE (CHOIX MULTIPLE) -->
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label for="chk_eco_reform" class="text-[10px] font-bold text-orange-700 uppercase tracking-widest cursor-pointer select-none">Critères de Réforme Économique</label>
+                                    <input type="checkbox" id="chk_eco_reform" class="w-5 h-5 text-orange-600 rounded border-gray-300 focus:ring-orange-500 cursor-pointer" onchange="toggleEcoReason()">
+                                </div>
+                                
+                                <div id="eco_reason_container" class="hidden-section mt-2">
+                                    <label class="block text-[10px] font-bold text-orange-400 uppercase tracking-widest mb-2 ml-1">Motifs Administratifs (Choix Multiples)</label>
+                                    
+                                    <div class="bg-white border border-orange-200 rounded-xl p-3 space-y-1 text-xs text-orange-900">
+                                        <div class="checkbox-item checkbox-item-eco">
+                                            <input type="checkbox" name="eco_reason" value="Procédure VEI (Réparations > Valeur)" class="mt-0.5 rounded text-orange-600 focus:ring-orange-500" onchange="updateVrade()">
+                                            <span>Procédure VEI (Véhicule Économiquement Irréparable)</span>
+                                        </div>
+                                        <div class="checkbox-item checkbox-item-eco">
+                                            <input type="checkbox" name="eco_reason" value="Indisponibilité des pièces de rechange" class="mt-0.5 rounded text-orange-600 focus:ring-orange-500" onchange="updateVrade()">
+                                            <span>Indisponibilité des pièces de rechange</span>
+                                        </div>
+                                        <div class="checkbox-item checkbox-item-eco">
+                                            <input type="checkbox" name="eco_reason" value="Valeur de sauvetage élevée" class="mt-0.5 rounded text-orange-600 focus:ring-orange-500" onchange="updateVrade()">
+                                            <span>Valeur de sauvetage élevée (Epave)</span>
+                                        </div>
+                                        <div class="checkbox-item checkbox-item-eco">
+                                            <input type="checkbox" name="eco_reason" value="Accord Commercial / Assureur" class="mt-0.5 rounded text-orange-600 focus:ring-orange-500" onchange="updateVrade()">
+                                            <span>Accord Commercial / Assureur</span>
+                                        </div>
+                                        <div class="checkbox-item checkbox-item-eco">
+                                            <input type="checkbox" name="eco_reason" value="Risque d'aléas importants au démontage" class="mt-0.5 rounded text-orange-600 focus:ring-orange-500" onchange="updateVrade()">
+                                            <span>Risque d'aléas importants au démontage</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BLOC OPTIONS CORRECTIFS & SEUIL -->
+                        <div class="pt-4 border-t border-slate-100">
+                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                                 <!-- Ligne 1 : Facteurs Correctifs -->
+                                 <div class="flex items-center justify-between">
+                                     <label for="chk_correctives" class="text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer select-none">
+                                         APPLIQUER FACTEURS CORRECTIFS
+                                     </label>
+                                     <input type="checkbox" id="chk_correctives" class="w-5 h-5 text-blue-900 rounded border-gray-300 focus:ring-blue-900 cursor-pointer transition-colors" onchange="toggleCorrectives()">
+                                 </div>
+                                 
+                                 <!-- Ligne 2 : Seuil -->
+                                 <div class="flex items-center justify-between border-t border-slate-100 pt-4">
+                                     <label for="chk_apply_to_threshold" class="text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer select-none flex items-center gap-2">
+                                         <span>APPLIQUER CORRECTIFS SUR SEUIL (2/3)</span>
+                                     </label>
+                                     <input type="checkbox" id="chk_apply_to_threshold" class="w-5 h-5 text-blue-900 rounded border-gray-300 focus:ring-blue-900 cursor-pointer transition-colors" onchange="updateVrade()">
+                                 </div>
+                             </div>
+
+                             <!-- Contenu Déroulant Correctifs -->
+                             <div id="container_correctifs" class="hidden-section mt-3">
+                                 <div class="grid grid-cols-2 gap-4 bg-blue-50/30 p-3 rounded-xl border border-blue-100">
+                                    <!-- KM Section -->
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">KM Compteur</label>
+                                        <input type="number" id="v_km_compteur" value="0" placeholder="Ex: 150000" class="w-full p-2 bg-white border border-slate-200 rounded-xl input-focus outline-none font-mono-num text-sm text-center" oninput="updateVrade()">
+                                        
+                                        <!-- KM Impact Display -->
+                                        <div class="mt-2 text-right">
+                                            <div class="w-full p-1.5 bg-white/50 rounded-lg font-mono-num text-xs font-bold text-slate-500">
+                                                <span id="disp_adj_km">0,00 Dhs</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Entretien Section -->
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Entretien</label>
+                                        <select id="v_entretien" class="w-full p-2 bg-white border border-slate-200 rounded-xl input-focus outline-none text-xs font-medium cursor-pointer" onchange="updateVrade()">
+                                            <option value="0">Standard (0%)</option>
+                                            <option value="10">Suivi Concessionnaire (+10%)</option>
+                                            <option value="5">Bon État (+5%)</option>
+                                            <option value="-5">Moyen (-5%)</option>
+                                            <option value="-10">Mauvais (-10%)</option>
+                                        </select>
+
+                                        <!-- Entretien Impact Display -->
+                                        <div class="mt-2 text-right">
+                                            <div class="w-full p-1.5 bg-white/50 rounded-lg font-mono-num text-xs font-bold text-slate-500">
+                                                <span id="disp_adj_ent">0,00 Dhs</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                             </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm text-center">
-                        <p class="summary-label text-xs font-bold text-slate-400 uppercase mb-1">Total HT Brut</p>
-                        <p id="sum_net_ht" class="text-2xl font-rose text-slate-800">0,00</p>
+                <div class="p-5 bg-blue-900 text-white rounded-[2rem] shadow-lg border border-blue-800">
+                    <h4 class="text-xs font-bold uppercase tracking-widest mb-2 opacity-80">Règle de Réforme</h4>
+                    <p class="text-xs leading-relaxed font-normal">
+                        Un véhicule est déclaré en <span class="font-bold underline">Réforme Économique</span> si le montant des réparations excède les <span class="font-bold">2/3 (66.67%)</span> de sa <span class="text-blue-200 font-medium">Valeur Technique</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Results Dashboard -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                
+                <!-- Décision Technique Card -->
+                <div id="decision-box" class="decision-card bg-white p-8 rounded-[2.5rem] shadow-sm border-t-8 border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
+                    <div class="flex items-center gap-6">
+                        <div id="decision-icon-bg" class="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center text-3xl text-slate-400 shadow-inner">
+                            <i id="decision-icon" class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <div>
+                            <p class="text-blue-900 text-[11px] font-bold uppercase tracking-[0.2em] mb-1">EXPERTISE TECHNIQUE</p>
+                            <h2 id="decision-label" class="text-2xl md:text-3xl font-medium text-slate-900 leading-tight">En attente de saisie</h2>
+                            <p id="decision-sub" class="text-xs text-slate-500 mt-1 font-medium hidden leading-relaxed">Motifs : <span id="decision-reason" class="block mt-1 font-bold"></span></p>
+                        </div>
                     </div>
-                    <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100 text-center">
-                        <p class="summary-label text-xs font-bold text-rose-400 uppercase mb-1">Total Abattements</p>
-                        <p id="sum_vetuste" class="text-2xl font-black text-rose-600">0,00</p>
+                    <div class="text-center md:text-right border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8">
+                        <p class="text-blue-900 text-[11px] font-bold uppercase tracking-widest mb-1" id="kpi-seuil-label">Seuil Réforme (2/3 de Base)</p>
+                        <p id="kpi-seuil" class="text-xl font-medium font-mono-num text-slate-700">0,00 Dhs</p>
                     </div>
-                    <div class="bg-indigo-800 p-5 rounded-2xl shadow-xl text-center text-white">
-                        <p class="summary-label text-xs font-bold text-indigo-200 uppercase mb-1">TOTAL NET TTC</p>
-                        <p id="sum_net_ttc" class="text-3xl font-black tracking-tight">0,00</p>
+                </div>
+
+                <!-- KPIs Principaux -->
+                <div class="bg-blue-950 p-10 rounded-[2.5rem] text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden border border-blue-900">
+                    <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                        <svg viewBox="0 0 100 100" class="w-full h-full"><path d="M0 100 L100 0 L100 100 Z" fill="white"/></svg>
+                    </div>
+                    <div class="relative z-10 text-center md:text-left flex-1">
+                        <p class="text-blue-200 text-[11px] font-bold uppercase tracking-[0.3em] mb-2">Valeur Vénale <span id="label-vv-type">Standard</span></p>
+                        <h3 class="text-4xl font-medium mt-1 font-mono-num tracking-tight" id="kpi-vv-final">0,00 Dhs</h3>
+                        <p class="text-slate-400 text-[11px] mt-2 font-normal" id="label-vv-sub">Calcul sur dépréciation temporelle</p>
+                    </div>
+                    <div class="text-right border-l border-white/10 pl-10 hidden md:block relative z-10">
+                        <div class="mb-4">
+                            <p class="text-white/60 text-[11px] font-bold uppercase tracking-[0.2em] mb-1">Valeur Base (Temps)</p>
+                            <p class="text-lg font-medium text-white/90 font-mono-num" id="kpi-val-base">0,00 Dhs</p>
+                        </div>
+                        <div>
+                            <p class="text-white/60 text-[11px] font-bold uppercase tracking-[0.2em] mb-1">Impact Correctifs</p>
+                            <p class="text-lg font-medium text-emerald-400 font-mono-num" id="kpi-impact-total">0,00 Dhs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphs -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
+                        <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-6 text-center">Courbe de Vétusté</h4>
+                        <div class="chart-container"><canvas id="chartEvo"></canvas></div>
+                    </div>
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
+                        <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-6 text-center">Composition Valeur</h4>
+                        <div class="chart-container"><canvas id="chartDist"></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audit Table -->
+        <section class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden no-print">
+            
+            <!-- Wrapper pour masquer le tableau en cas de réforme technique -->
+            <div id="ui-audit-section">
+                <div class="p-8 border-b border-slate-50 bg-slate-50/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-indigo-900 tracking-tight mb-1">Prorata Temporis</h3>
+                        <p class="text-sm text-blue-800 font-medium">Certification établie par le Cabinet BETCAM.</p>
+                    </div>
+                    <div class="seniority-badge px-6 py-3.5 text-white rounded-2xl flex items-center gap-4 border border-emerald-400/30 shadow-lg shadow-emerald-100/50" id="kpi-anciennete-container">
+                        <i class="fa-solid fa-calendar-check text-xl opacity-60"></i>
+                        <div class="flex flex-col">
+                            <span class="text-[9px] font-bold text-emerald-100 tracking-widest uppercase">ANCIENNETÉ</span>
+                            <span class="text-xl font-bold tracking-tight leading-none" id="kpi-anciennete">0 ans, 0 jrs</span>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="glass-panel rounded-2xl overflow-hidden border shadow-md">
-                    <div class="table-container custom-scroll">
-                        <table class="w-full text-left border-collapse min-w-[850px]">
-                            <thead>
-                                <tr class="text-[11px] font-black text-slate-500 uppercase tracking-widest border-b bg-slate-50/80">
-                                    <th class="p-5 sticky-col">Désignation</th>
-                                    <th class="p-5 text-center">Source</th>
-                                    <th class="p-5 text-center">Qté</th>
-                                    <th class="p-5 text-center">P.U HT</th>
-                                    <th class="p-5 text-center">Vét. %</th>
-                                    <th class="p-5 text-center text-indigo-700">LIGNE TTC</th>
-                                    <th class="p-5 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="parts_table_body" class="text-sm divide-y divide-slate-100 bg-white"></tbody>
-                        </table>
-                        <div id="empty_msg" class="p-24 text-center text-slate-300">
-                            <i class="fa-solid fa-folder-open text-6xl mb-4 opacity-20"></i>
-                            <p class="font-bold text-lg text-slate-400">Dossier vide</p>
-                            <p class="text-sm">Ajoutez des articles via le formulaire à gauche.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse font-mono-num text-sm">
+                        <thead>
+                            <tr class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.15em] bg-blue-50/30">
+                                <th class="p-6 border-b border-blue-100">Année</th>
+                                <th class="p-6 border-b border-blue-100">Période d'application</th>
+                                <th class="p-6 border-b border-blue-100 text-center">Taux (%)</th>
+                                <th class="p-6 border-b border-blue-100 text-right">Val. Début (Dhs)</th>
+                                <th class="p-6 border-b border-blue-100 text-right">Dépréciation (Dhs)</th>
+                                <th class="p-6 border-b border-blue-100 text-right font-bold text-blue-950">Val. Fin (Dhs)</th>
+                                <th class="p-6 border-b border-blue-100 text-center">Jours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vradeTable" class="divide-y divide-slate-50"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- RECAP TABLE -->
+            <div class="bg-slate-50/50 p-8 border-t border-slate-100">
+                <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-4 text-center">Récapitulatif Financier</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm font-mono-num border border-slate-200 rounded-xl bg-white">
+                        <thead class="bg-blue-50 text-[11px] uppercase font-bold text-blue-900">
+                            <tr>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur à Neuf</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur Base (Temps)</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Impact Correctifs</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center bg-blue-100/50 text-blue-900">Valeur Vénale Technique</th>
+                                <th class="p-4 border-b border-slate-200 text-center" id="dash_recap_seuil_label">Seuil (2/3 Base)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center font-medium text-slate-700">
+                            <tr>
+                                <td class="p-4 border-r border-slate-200" id="dash_recap_val_neuf">0,00 Dhs</td>
+                                <td class="p-4 border-r border-slate-200" id="dash_recap_val_base">0,00 Dhs</td>
+                                <td class="p-4 border-r border-slate-200" id="dash_recap_impact">0,00 Dhs</td>
+                                <td class="p-4 border-r border-slate-200 bg-blue-50/30 font-bold text-blue-900 text-lg" id="dash_recap_val_venale">0,00 Dhs</td>
+                                <td class="p-4" id="dash_recap_seuil">0,00 Dhs</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NOUVELLE SECTION : MAJORATION MARCHÉ -->
+            <div class="bg-emerald-50/30 p-8 border-t border-slate-100">
+                <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-6 text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Ajustement Expert : Marché & État
+                </h4>
+                
+                <div class="max-w-2xl mx-auto bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="text-xs font-bold text-slate-600 uppercase tracking-wide">Majoration (Propreté / Marché / Rareté)</label>
+                        <span id="market-percent-display" class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold font-mono-num">+0%</span>
+                    </div>
+                    
+                    <input type="range" id="v_market_boost" min="0" max="50" value="0" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-900" oninput="updateVrade()">
+                    
+                    <div class="flex justify-between text-[10px] text-slate-400 mt-2 font-medium">
+                        <span>0%</span>
+                        <span>+25%</span>
+                        <span>+50%</span>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-end">
+                        <div class="text-xs text-slate-500">
+                            Impact sur la valeur : <span id="market-value-added" class="font-bold text-emerald-600 font-mono-num">+0,00 Dhs</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Valeur Vénale Retenue</p>
+                            <p id="kpi-final-retained" class="text-2xl font-extrabold text-blue-900 font-mono-num">0,00 Dhs</p>
                         </div>
                     </div>
                 </div>
+                
+                <p class="text-center text-[10px] text-slate-400 italic mt-4 max-w-lg mx-auto">
+                    * Cet ajustement augmente la Valeur Vénale Finale mais n'affecte PAS le seuil de réforme économique (2/3 de la valeur technique), conformément aux procédures d'expertise.
+                </p>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div id="toast-container"></div>
+        <footer class="text-center text-blue-900 text-[11px] font-bold uppercase tracking-[0.2em] pb-12 opacity-80 no-print mt-8">
+            <p>© 2026 Cabinet D'expertise BETCAM - Document certifié conforme.</p>
+        </footer>
+    </div> <!-- Fin du app-wrapper -->
 
-    <!-- MODAL PREVIEW -->
-    <div id="preview-modal">
-        <div class="flex flex-col h-full w-full max-w-6xl">
-            <div class="flex justify-between items-center p-4 bg-white rounded-t-xl z-50 shadow-lg">
-                <h3 class="text-xl font-black text-slate-800 uppercase"><i class="fa-solid fa-eye text-indigo-600 mr-2"></i> Aperçu Avant Impression</h3>
-                <div class="flex gap-2">
-                    <button type="button" onclick="printReport()" class="px-5 py-2.5 bg-slate-800 text-white rounded-lg text-sm font-bold hover:bg-black active:scale-95 transition-all shadow-md"><i class="fa-solid fa-print mr-2"></i> IMPRIMER</button>
-                    <button type="button" onclick="generatePDFFromPreview()" id="btn-dl-pdf" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold hover:bg-indigo-700"><i class="fa-solid fa-download mr-2"></i> PDF</button>
-                    <button type="button" onclick="closePreview()" class="px-5 py-2.5 bg-rose-100 text-rose-600 rounded-lg text-sm font-bold hover:bg-rose-200"><i class="fa-solid fa-xmark mr-2"></i> FERMER</button>
-                </div>
-            </div>
-            <div id="preview-content-scroll" onclick="if(event.target === this) closePreview()">
-                <div id="preview-paper"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- TEMPLATE PDF (SOURCE) -->
-    <!-- AJUSTEMENT CRITIQUE : Padding interne + Largeur forcée + Box-sizing -->
-    <div id="pdf-template-source">
-        <div style="padding: 10mm; background: white; min-height: 297mm; position: relative; font-family: 'Helvetica', Arial, sans-serif; color: #000; box-sizing: border-box;">
-            <table style="width: 100%; border-bottom: 3px solid #1e3a8a; padding-bottom: 15px; margin-bottom: 25px;">
-                <tr>
-                    <td style="width: 60%;">
-                        <h1 style="font-size: 26pt; font-weight: 900; color: #1e3a8a; margin:0; line-height: 1;">CABINET BETCAM</h1>
-                        <p style="font-size: 10pt; font-weight: 700; color: #64748b; margin-top:5px; text-transform: uppercase;">EXPERTISE TECHNIQUE AUTOMOBILE • MEKNÈS</p>
-                    </td>
-                    <td style="width: 40%; text-align: right; font-size: 10pt; line-height: 1.5;">
-                        <p><strong>RAPPORT N° :</strong> <span class="pdf_ref"></span></p>
-                        <p><strong>DATE :</strong> <span class="pdf_date"></span></p>
-                    </td>
-                </tr>
-            </table>
-            <table style="width: 100%; margin-bottom: 20px; border-collapse: separate; border-spacing: 0;">
-                <tr>
-                    <td style="width: 50%; vertical-align: top; padding-right: 10px;">
-                        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; background: #ffffff;">
-                            <p style="font-size: 9pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; padding-bottom: 5px;">Identification du dossier & VÉHICULE</p>
-                            <table style="width: 100%; font-size: 10pt; line-height: 1.6;">
-                                <tr><td style="color:#64748b; width: 40%;">Assuré :</td><td class="pdf_assure" style="font-weight:800;"></td></tr>
-                                <tr><td style="color:#64748b;">Requérant :</td><td class="pdf_requerant"></td></tr>
-                                <tr><td style="color:#64748b;">Compagnie :</td><td class="pdf_cie"></td></tr>
-                                <tr><td style="color:#64748b;">N° Sinistre :</td><td class="pdf_ref_sinistre" style="font-weight:800; color:#b91c1c;"></td></tr>
-                                <tr><td style="color:#64748b;">Immatriculation :</td><td class="pdf_immat" style="font-weight:800;"></td></tr>
-                                <tr><td style="color:#64748b;">Véhicule :</td><td class="pdf_vehicule"></td></tr>
-                                <tr><td style="color:#64748b;">Genre/Puiss :</td><td class="pdf_genre_puiss"></td></tr>
-                                <tr><td style="color:#64748b;">Châssis/Carb :</td><td class="pdf_chassis_carb"></td></tr>
-                            </table>
+    <!-- ========================================== -->
+    <!-- TEMPLATE CACHÉ POUR L'EXPORT PDF           -->
+    <!-- ========================================== -->
+    <div id="pdf-export-template">
+        <!-- Changed height from 100% to auto to prevent overflow, added max-width constraint -->
+        <div style="width: 100%; box-sizing: border-box; background: white; padding: 20px 30px; display: flex; flex-direction: column; height: 297mm;">
+            
+            <div style="flex: 1;"> <!-- Content Wrapper -->
+                <!-- Header PDF (Compacté) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 8px; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <!-- LOGO SVG (Bouclier Expertise) for PDF -->
+                        <div style="width: 28px; height: 28px; color: #1e3a8a;">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="m9 12 2 2 4-4"/>
+                            </svg>
                         </div>
-                    </td>
-                    <td style="width: 50%; vertical-align: top; padding-left: 10px;">
-                        <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; background-color: #f8fafc;">
-                            <p style="font-size: 9pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; padding-bottom: 5px;">CONSTAT SINISTRE</p>
-                            <table style="width: 100%; font-size: 10pt; line-height: 1.6;">
-                                <tr><td style="color:#64748b; width: 40%;">Date Sinistre :</td><td class="pdf_sinistre" style="font-weight: 800;"></td></tr>
-                                <tr><td style="color:#64748b;">Date Epertise :</td><td class="pdf_visite"></td></tr>
-                                <tr><td style="color:#64748b;">Point de choc :</td><td class="pdf_choc" style="font-weight: 800; color: #ef4444;"></td></tr>
-                                <tr><td style="color:#64748b;">Kilométrage :</td><td class="pdf_km"></td></tr>
-                                <tr><td style="color:#64748b;">Pneus :</td><td class="pdf_pneus"></td></tr>
-                                <tr><td style="color:#64748b;">État Général :</td><td class="pdf_etat"></td></tr>
-                                <tr><td style="color:#64748b;">Âge appliqué :</td><td class="pdf_age" style="font-weight: 800;"></td></tr>
-                            </table>
+                        <div>
+                            <h1 style="margin:0; color:#1e3a8a; font-size: 16px; font-weight: 800;">Cabinet D'expertise <span style="color:#1e3a8a;">BETCAM</span></h1>
+                            <p style="margin:1px 0 0; color:#1e3a8a; font-size: 6px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">
+                                Bureau d'Etudes Techniques - Expertises<br>et Conseils Automobiles et Machines Agricoles
+                            </p>
                         </div>
-                    </td>
-                </tr>
-            </table>
-            <div id="pdf_reforme_block" style="border: 2px solid #10b981; border-radius: 8px; padding: 15px; margin-bottom: 25px; background-color: #ecfdf5; display: none;">
-                <table style="width: 100%;">
-                    <tr>
-                        <td style="vertical-align: middle;">
-                            <p style="font-size: 9pt; font-weight: 900; color: #065f46; text-transform: uppercase; margin: 0;">ÉVALUATION ÉCONOMIQUE DE RÉFORME</p>
-                            <div style="font-size: 12pt; margin-top: 8px; color: #064e3b;">
-                                Valeur Vénale : <span class="pdf_val_venale" style="font-weight:800;"></span> | 
-                                Valeur Épave : <span class="pdf_val_epave" style="font-weight:800; color: #ef4444;"></span>
-                            </div>
-                        </td>
-                        <td style="text-align: right; vertical-align: middle;">
-                            <div style="font-size: 9pt; color: #065f46; font-weight: 700; text-transform: uppercase;">NET À DIRE</div>
-                            <div class="pdf_net_a_dire" style="font-size: 22pt; font-weight:900; color:#059669; line-height: 1;"></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <p style="font-size: 10pt; font-weight: 900; color: #1e3a8a; text-transform: uppercase; margin-bottom: 10px; padding-left: 5px;">DÉTAILS DES DOMMAGES ÉVALUÉS ET VÉTUSTÉ</p>
-            <table style="width: 100%; border-collapse: collapse; font-size: 10pt; border: 1.5px solid #1e3a8a;">
-                <thead>
-                    <tr style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact; border-bottom: 2px solid #1e3a8a;">
-                        <th style="padding: 10px; text-align: center; border: 1px solid #1e3a8a; color: #020617 !important; font-size: 12pt; font-weight: 900;">DÉSIGNATION / SOURCE</th>
-                        <th style="padding: 10px 5px; text-align: center; border: 1px solid #1e3a8a; width: 50px; color: #020617 !important; font-size: 12pt; font-weight: 900;">QTÉ</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #1e3a8a; width: 100px; color: #020617 !important; font-size: 12pt; font-weight: 900;">UNIT. HT</th>
-                        <th style="padding: 10px 5px; text-align: center; border: 1px solid #1e3a8a; width: 60px; color: #020617 !important; font-size: 12pt; font-weight: 900;">VÉT.</th>
-                        <th style="padding: 10px; text-align: center; border: 1px solid #1e3a8a; width: 130px; color: #020617 !important; font-size: 12pt; font-weight: 900;">TOTAL TTC</th>
-                    </tr>
-                </thead>
-                <tbody class="pdf_table_body"></tbody>
-            </table>
-            <table style="width: 100%; margin-top: 30px;">
-                <tr>
-                    <td style="width: 55%; padding-right: 20px; vertical-align: top;">
-                         <div style="font-size: 9pt; color: #1e3a8a; font-weight: 800; text-transform: uppercase; margin-bottom: 5px;">Arrêté le présent rapport à la somme de :</div>
-                         <div class="pdf_montant_lettres" style="font-size: 11pt; font-weight: 700; color: #1e293b; line-height: 1.4; font-style: italic;"></div>
-                         
-                         <!-- OBSERVATIONS DANS LE PDF -->
-                         <div style="margin-top: 25px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                             <div style="font-size: 10pt; color: #475569; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">Observations & Conclusions :</div>
-                             <div class="pdf_observations" style="font-size: 10pt; color: #334155; line-height: 1.5; white-space: pre-line;"></div>
-                         </div>
-                    </td>
-                    <td style="width: 45%; vertical-align: top;">
-                        <table style="width: 100%; font-size: 12pt; border-collapse: collapse;">
-                            <tr><td style="padding: 5px 0; color: #64748b;">Expertisé HT :</td><td class="pdf_final_ht" style="text-align: right; font-weight: 700; color: #1e293b;"></td></tr>
-                            <tr><td style="padding: 5px 0; color: #64748b;">Vétusté totale :</td><td class="pdf_final_vet" style="text-align: right; font-weight: 800; color: #ef4444;"></td></tr>
-                            <tr style="font-size: 14pt; font-weight: 900; color: #1e3a8a; border-top: 3px solid #1e3a8a;"><td style="padding: 15px 0;">NET GÉNÉRAL :</td><td class="pdf_final_ttc" style="padding: 15px 0; text-align: right;"></td></tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            <div style="margin-top: 40px; text-align: right;">
-                <div style="display: inline-block; text-align: center; width: 200px;">
-                    <p style="font-size: 11pt; font-weight: 900; color: #1e3a8a;">L'Expert Technique</p>
-                    <div style="height: 80px; border-bottom: 1px dashed #cbd5e1; margin: 10px 0;"></div>
-                    <p style="font-size: 10pt; font-weight: 700;">Cabinet BETCAM</p>
+                    </div>
+                    <div style="text-align: right; color: #1e3a8a; font-size: 8px;">
+                        Établi le : <span id="pdf-date-now" style="font-weight: 700; color: #000;">--/--/----</span><br>
+                        Réf : <span id="pdf-ref-display" style="color: #000; font-weight: 600;">VRADE-AUTOGEN</span>
+                    </div>
                 </div>
-            </div>
-            <div style="position: absolute; bottom: 30px; left: 40px; right: 40px; text-align: center; font-size: 8pt; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-                Cabinet d'Expertise Technique Automobile BETCAM • 15, rue Abou Ali Ben Rahal, Meknès • Maroc
+
+                <!-- BANNER TITLE -->
+                <div style="text-align: center; border-top: 2px solid #1e3a8a; border-bottom: 2px solid #1e3a8a; margin: 8px 0 12px 0; padding: 6px 0; background-color: #eff6ff;">
+                    <h1 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e3a8a; letter-spacing: 2px; text-transform: uppercase;">FICHE RÉFORME</h1>
+                </div>
+
+                <!-- 1. IDENTIFICATION (Tableau mis à jour avec Compagnie et espacement) -->
+                <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; margin-bottom: 8px; background-color: #f8fafc;">
+                    <h2 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1e3a8a; margin: 0 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. IDENTIFICATION</h2>
+                    <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Assuré :</td>
+                            <td id="pdf-nom-assure" style="padding: 4px 6px; width: 25%; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">N° Sinistre :</td>
+                            <td id="pdf-num-sinistre" style="padding: 4px 6px; width: 25%; font-weight: 700;">--</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Compagnie :</td>
+                            <td id="pdf-cie-assurance" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Immatriculation :</td>
+                            <td id="pdf-mat" style="padding: 4px 6px; font-weight: 700;">--</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Marque / Modèle :</td>
+                            <td id="pdf-marque-modele" style="padding: 4px 6px; font-weight: 700; text-transform: uppercase;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Kilométrage :</td>
+                            <td id="pdf-km" style="padding: 4px 6px; font-weight: 700;">0 km</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Énergie :</td>
+                            <td id="pdf-energie" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Puissance Fiscale :</td>
+                            <td id="pdf-puissance" style="padding: 4px 6px; font-weight: 700;">--</td>
+                        </tr>
+                        <!-- NEW ROW -->
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Catégorie :</td>
+                            <td id="pdf-cat" colspan="3" style="padding: 4px 6px; font-weight: 700;">--</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- 2. CHRONOLOGIE -->
+                <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; margin-bottom: 8px; background-color: #fff;">
+                    <h2 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1e3a8a; margin: 0 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. CHRONOLOGIE</h2>
+                    <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Mise en circulation :</td>
+                            <td id="pdf-dmec" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Date du Sinistre :</td>
+                            <td id="pdf-sinistre" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Date Expertise :</td>
+                            <td id="pdf-date-expertise" style="padding: 4px 6px; font-weight: 700;">--/--/----</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Ancienneté :</td>
+                            <td id="pdf-anciennete" style="padding: 4px 6px; font-weight: 700;">0 ans, 0 jrs</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- 3. DONNÉES FINANCIÈRES -->
+                <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; margin-bottom: 8px; background-color: #f0f9ff;">
+                    <h2 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1e3a8a; margin: 0 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">3. DONNÉES FINANCIÈRES</h2>
+                    <table style="width: 100%; font-size: 10px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 4px 6px; width: 40%; font-weight: 600; color: #1e3a8a;">Valeur à Neuf :</td>
+                            <td id="pdf-val-neuve" style="padding: 4px 6px; font-weight: 700; text-align: right;">0,00 Dhs</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #1e3a8a;">Montant Devis :</td>
+                            <td id="pdf-devis" style="padding: 4px 6px; font-weight: 700; text-align: right;">0,00 Dhs</td>
+                        </tr>
+                        <tr id="pdf-row-accord" style="display:none;">
+                            <td style="padding: 4px 6px; font-weight: 700; color: #059669;">Accord sur Devis :</td>
+                            <td id="pdf-accord" style="padding: 4px 6px; font-weight: 700; text-align: right; color: #059669;">0,00 Dhs</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- RECAP TABLE -->
+                <div id="pdf-recap-section" style="margin-bottom: 8px;">
+                    <h2 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1e3a8a; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">4. RÉCAPITULATIF CALCUL</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; text-align: center; color: #000; border: 1px solid #e2e8f0;">
+                        <thead style="background: #f1f5f9; color: #1e3a8a; font-weight: 700; text-transform: uppercase;">
+                            <tr>
+                                <th style="padding: 6px; border-right: 1px solid #e2e8f0;">Valeur Base</th>
+                                <th style="padding: 6px; border-right: 1px solid #e2e8f0;">Correctifs</th>
+                                <th style="padding: 6px; border-right: 1px solid #e2e8f0; background: #e0f2fe;">VRADE Technique</th>
+                                <th style="padding: 6px;">Seuil (2/3)</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-weight: 500;">
+                            <tr>
+                                <td id="pdf-recap-val-base" style="padding: 6px; border-right: 1px solid #e2e8f0;">0,00 Dhs</td>
+                                <td id="pdf-recap-impact" style="padding: 6px; border-right: 1px solid #e2e8f0;">0,00 Dhs</td>
+                                <!-- Added ID here for injection -->
+                                <td id="pdf-vv-final" style="display:none;"></td> 
+                                <td id="pdf-recap-val-venale" style="padding: 6px; border-right: 1px solid #e2e8f0; font-weight: 700; color: #1e3a8a; background: #f0f9ff;">0,00 Dhs</td>
+                                <td id="pdf-recap-seuil" style="padding: 6px;">0,00 Dhs</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- DECISION BOX -->
+                <div style="background-color: #fff; border: 2px solid #e2e8f0; padding: 12px; text-align: center; border-radius: 8px; margin-bottom: 12px;">
+                    <div id="pdf-decision-box" style="font-weight: 800; font-size: 15px; color: #1e3a8a; text-transform: uppercase;">-- DÉCISION --</div>
+                    <div id="pdf-tech-reason" style="display:none; text-align: center; margin-top: 8px; font-size: 10px; font-weight: 600; color: #dc2626;">
+                        <div id="pdf-tech-reason-text"></div>
+                    </div>
+                </div>
+
+                <!-- Tableau Audit PDF - Section à masquer si réforme technique -->
+                <div id="pdf-audit-section">
+                    <h2 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #1e3a8a; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">5. DÉTAIL DÉPRÉCIATION</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 9px; text-align: left; color: #000;">
+                        <thead>
+                            <tr style="background: #f1f5f9; color: #1e3a8a; border-bottom: 1px solid #1e3a8a;">
+                                <th style="padding: 4px 6px; border: 1px solid #e2e8f0; font-weight: 700;">Année</th>
+                                <th style="padding: 4px 6px; border: 1px solid #e2e8f0; font-weight: 700;">Période</th>
+                                <th style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700;">Taux</th>
+                                <th style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Dépréciation</th>
+                                <th style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: right; font-weight: 700;">Valeur Fin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdf-table-body">
+                            <!-- Rempli par script -->
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- End Content Wrapper -->
+
+            <!-- NEW FOOTER -->
+            <div style="margin-top: auto; text-align: center; font-size: 8px; color: #1e3a8a; border-top: 2px solid #1e3a8a; padding-top: 10px;">
+                <p style="margin: 0 0 2px 0;">15, Rue Abou Ali Ben Rahal, 1er étage Appt N°8 V.N Meknès - Tél.: 05 35 52 60 90 - Fax: 05 35 52 60 91</p>
+                <p style="margin: 0 0 2px 0;">E-mail: betcam01@gmail.com - RC: 29915 - Patente: 17318252 - CNSS: 8258875 - IF: 40147134</p>
+                <p style="margin: 0; font-weight: 700;">ICE : 0014 3853 0000 042</p>
             </div>
         </div>
     </div>
-
+    
     <script>
-        // --- DATA CATALOGUE ---
-        const VEHICLES_DB = {
-            "DACIA": ["Logan", "Sandero", "Duster", "Jogger", "Dokker", "Spring"],
-            "RENAULT": ["Clio", "Megane", "Captur", "Express", "Master", "Kangoo", "Austral"],
-            "PEUGEOT": ["208", "2008", "308", "3008", "408", "508", "Partner", "Expert"],
-            "VOLKSWAGEN": ["Golf", "Polo", "Tiguan", "Touareg", "Caddy", "Transporter", "ID.4"],
-            "TOYOTA": ["Yaris", "Corolla", "Rav4", "Hilux", "Land Cruiser", "Prado"],
-            "HONDA": ["Jazz", "City", "Civic", "Accord", "HR-V", "CR-V", "ZR-V"],
-            "HYUNDAI": ["i10", "i20", "i30", "Tucson", "Santa Fe", "Accent", "Creta"],
-            "KIA": ["Picanto", "Rio", "Sportage", "Sorento", "K5", "Sonet"],
-            "CITROËN": ["C3", "C4", "C5 Aircross", "Berlingo", "Jumper"],
-            "FORD": ["Fiesta", "Focus", "Kuga", "Ranger", "Transit"],
-            "FIAT": ["500", "Tipo", "Doblo", "Ducato"],
-            "AUTRES": ["Modèle Spécifique"]
-        };
-        const PARTS_DB = {
-            CARROSSERIE: ["Aile AV DR", "Aile AV G", "Aile AR DR", "Aile AR G", "Capot AV", "Hayon AR", "Porte AV DR", "Porte AV G", "Porte AR DR", "Porte AR G", "Pare-chocs AV", "Pare-chocs AR", "Calandre", "Optique AV DR", "Optique AV G", "Feu AR DR", "Feu AR G", "Pare-brise AV", "Lunette AR", "Rétroviseur DR", "Rétroviseur G"],
-            MECANIQUE: ["Radiateur Eau", "Radiateur Clim", "Intercooler", "Alternateur", "Démarreur", "Compresseur Clim", "Cardan DR", "Cardan G", "Amortisseur AV", "Amortisseur AR", "Crémaillère", "Pompe direction", "Calculateur"],
-            USURE: ["Pneu", "Batterie", "Plaquettes frein", "Disques frein", "Kit Distribution", "Embrayage"],
-            MAIN_DOEUVRE: ["M.O. Tôlerie", "M.O. Peinture", "Ingrédients Peinture", "M.O. Mécanique", "M.O. Électricité", "Diagnostic", "Parallélisme"]
-        };
-        const MATRICES = {
-            CARROSSERIE: { A: [0, 5, 10, 15, 20, 25], B: [10, 20, 30, 40, 50, 50] },
-            MECANIQUE: { A: [5, 10, 15, 20, 25, 30], B: [10, 20, 30, 40, 50, 50] },
-            USURE: { A: [15, 30, 45, 60], B: [25, 50, 70] },
-            MAIN_DOEUVRE: { A: [0,0,0,0,0,0], B: [0,0,0,0,0,0] }
-        };
+        // MAIN LOGIC SCRIPT
+        
+        Chart.register(ChartDataLabels);
 
-        let parts = [];
-        let selectedChocs = [];
-        let saveTimeout;
+        // --- MATRICE DE CALCUL ---
+        const MATRICE = [
+            // 1. PP / Non Utilitaire
+            { cat: "PP/Non Utilitaire", pMin: 0, pMax: 7, carb: "Diesel", ans: [0.20, 0.15, 0.10, 0.10, 0.10] },
+            { cat: "PP/Non Utilitaire", pMin: 0, pMax: 7, carb: "Essence", ans: [0.20, 0.15, 0.10, 0.10, 0.10] },
+            { cat: "PP/Non Utilitaire", pMin: 8, pMax: 11, carb: "Diesel", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
+            { cat: "PP/Non Utilitaire", pMin: 8, pMax: 11, carb: "Essence", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
+            { cat: "PP/Non Utilitaire", pMin: 12, pMax: 999, carb: "Diesel", ans: [0.27, 0.20, 0.15, 0.10, 0.10] },
+            { cat: "PP/Non Utilitaire", pMin: 12, pMax: 999, carb: "Essence", ans: [0.30, 0.25, 0.20, 0.10, 0.10] },
 
-        window.onload = () => {
-            const makeSelect = document.getElementById('veh_make');
-            Object.keys(VEHICLES_DB).sort().forEach(make => {
-                const opt = document.createElement('option');
-                opt.value = make; opt.textContent = make;
-                makeSelect.appendChild(opt);
-            });
-            toggleFormContext();
-            loadState(); // Chargement des données sauvegardées
-        };
+            // 2. Location / Utilitaire
+            { cat: "Location/Utilitaire", pMin: 0, pMax: 7, carb: "Diesel", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
+            { cat: "Location/Utilitaire", pMin: 0, pMax: 7, carb: "Essence", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
+            { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Diesel", ans: [0.30, 0.25, 0.20, 0.15, 0.10] },
+            { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Essence", ans: [0.30, 0.25, 0.20, 0.15, 0.10] },
+            { cat: "Location/Utilitaire", pMin: 12, pMax: 999, carb: "Diesel", ans: [0.32, 0.25, 0.20, 0.15, 0.10] },
+            { cat: "Location/Utilitaire", pMin: 12, pMax: 999, carb: "Essence", ans: [0.32, 0.25, 0.20, 0.15, 0.10] },
 
-        // --- STORAGE LOGIC ---
-        function saveDataDebounced() {
-            clearTimeout(saveTimeout);
-            document.getElementById('save-indicator').classList.add('hidden');
-            saveTimeout = setTimeout(saveState, 1000);
-        }
+            // 3. Bus et Camions
+            { cat: "Bus et Camions", pMin: 0, pMax: 999, carb: "Diesel", ans: [0.35, 0.30, 0.25, 0.20, 0.15] },
+            { cat: "Bus et Camions", pMin: 0, pMax: 999, carb: "Essence", ans: [0.40, 0.35, 0.30, 0.25, 0.20] },
 
-        function saveState() {
-            const state = {
-                admin: {
-                    ref: document.getElementById('ref_dossier').value,
-                    mission: document.getElementById('date_mission').value,
-                    requerant: document.getElementById('requerant').value, // NEW
-                    ref_sinistre: document.getElementById('ref_sinistre').value,
-                    cie: document.getElementById('cie_assurance').value,
-                    assure: document.getElementById('assure_name').value
-                },
-                vehicule: {
-                    immat: document.getElementById('ref_immat').value,
-                    mec: document.getElementById('date_mec').value,
-                    make: document.getElementById('veh_make').value,
-                    model: document.getElementById('veh_model').value,
-                    genre: document.getElementById('veh_genre').value, // NEW
-                    puissance: document.getElementById('veh_puissance').value, // NEW
-                    chassis: document.getElementById('veh_chassis').value, // NEW
-                    carburant: document.getElementById('veh_carburant').value, // NEW
-                    choc: selectedChocs,
-                    sinistre: document.getElementById('date_sinistre').value,
-                    visite: document.getElementById('date_visite').value, // NEW
-                    km: document.getElementById('veh_km').value,
-                    pneus: document.getElementById('veh_pneus').value, // NEW
-                    etat: document.getElementById('veh_etat').value, // NEW
-                    cat: document.getElementById('cat_vehicule').value,
-                    val_venale: document.getElementById('val_venale').value,
-                    val_epave: document.getElementById('val_epave').value,
-                    obs: document.getElementById('expert_obs').value
-                },
-                parts: parts
-            };
-            localStorage.setItem('betcam_expert_v47', JSON.stringify(state));
+            // 4. Semi-Remorque
+            { cat: "Semi-Remorque", pMin: 0, pMax: 999, carb: "Diesel", ans: [0.35, 0.30, 0.25, 0.20, 0.15] },
+            { cat: "Semi-Remorque", pMin: 0, pMax: 999, carb: "Essence", ans: [0.40, 0.35, 0.30, 0.25, 0.20] },
+
+            // 5. Motocycle
+            { cat: "Motocycle", pMin: 0, pMax: 999, carb: "Essence", ans: [0.20, 0.15, 0.10, 0.10, 0.10] },
             
-            // UI Feedback
-            const ind = document.getElementById('save-indicator');
-            ind.classList.remove('hidden');
-            setTimeout(() => ind.classList.add('hidden'), 2000);
-        }
+            // 6. Engins
+            { cat: "Engins/Agricole", pMin: 0, pMax: 999, carb: "Diesel", ans: [0, 0, 0, 0, 0] },
+            { cat: "Engins/Agricole", pMin: 0, pMax: 999, carb: "Essence", ans: [0, 0, 0, 0, 0] }
+        ];
 
-        function loadState() {
-            const saved = localStorage.getItem('betcam_expert_v47');
-            if(!saved) return;
-            try {
-                const s = JSON.parse(saved);
-                
-                // Admin
-                document.getElementById('ref_dossier').value = s.admin.ref || "";
-                document.getElementById('date_mission').value = s.admin.mission || "";
-                document.getElementById('requerant').value = s.admin.requerant || ""; // NEW
-                document.getElementById('ref_sinistre').value = s.admin.ref_sinistre || "";
-                document.getElementById('cie_assurance').value = s.admin.cie || "";
-                document.getElementById('assure_name').value = s.admin.assure || "";
+        let chartEvo, chartDist;
+        let tableDataForPDF = [];
+        let finalCalculation = {};
 
-                // Vehicule
-                document.getElementById('ref_immat').value = s.vehicule.immat || "";
-                document.getElementById('date_mec').value = s.vehicule.mec || "";
-                document.getElementById('veh_make').value = s.vehicule.make || "";
-                updateModels();
-                document.getElementById('veh_model').value = s.vehicule.model || "";
-                document.getElementById('veh_genre').value = s.vehicule.genre || ""; // NEW
-                document.getElementById('veh_puissance').value = s.vehicule.puissance || ""; // NEW
-                document.getElementById('veh_chassis').value = s.vehicule.chassis || ""; // NEW
-                document.getElementById('veh_carburant').value = s.vehicule.carburant || "DIESEL"; // NEW
-                
-                // Sinistre/Etc
-                document.getElementById('date_sinistre').value = s.vehicule.sinistre || "";
-                document.getElementById('date_visite').value = s.vehicule.visite || ""; // NEW
-                document.getElementById('veh_km').value = s.vehicule.km || "";
-                document.getElementById('veh_pneus').value = s.vehicule.pneus || ""; // NEW
-                document.getElementById('veh_etat').value = s.vehicule.etat || ""; // NEW
-                
-                document.getElementById('cat_vehicule').value = s.vehicule.cat || "A";
-                document.getElementById('val_venale').value = s.vehicule.val_venale || "";
-                document.getElementById('val_epave').value = s.vehicule.val_epave || "";
-                document.getElementById('expert_obs').value = s.vehicule.obs || "";
-
-                // Chocs
-                selectedChocs = s.vehicule.choc || [];
-                const chocGrid = document.querySelectorAll('.choc-zone');
-                chocGrid.forEach(el => {
-                    const txt = el.innerText.trim();
-                    if(selectedChocs.includes(txt)) el.classList.add('active');
-                });
-                document.getElementById('veh_choc_value').value = selectedChocs.join(', ');
-                document.getElementById('choc_display_ui').innerText = selectedChocs.join(', ') || "Aucune zone";
-
-                // Parts
-                parts = s.parts || [];
-                
-                // Recalc
-                calcAge(); // Va aussi déclencher renderTable
-                updateIndemnite();
-                showToast("Dossier restauré", "success");
-
-            } catch(e) {
-                console.error("Erreur chargement save", e);
-            }
-        }
-
-        // --- CORE FUNCTIONS ---
-        function updateModels() {
-            const make = document.getElementById('veh_make').value;
-            const modelSelect = document.getElementById('veh_model');
-            const currentVal = modelSelect.value;
-            modelSelect.innerHTML = '<option value="">-- Modèle --</option>';
-            if(make && VEHICLES_DB[make]) {
-                VEHICLES_DB[make].sort().forEach(mod => {
-                    const opt = document.createElement('option');
-                    opt.value = mod; opt.textContent = mod;
-                    modelSelect.appendChild(opt);
-                });
-            }
-            if(currentVal) modelSelect.value = currentVal; // Keep selection if reloading
-        }
-
-        function toggleFormContext() {
-            const type = document.getElementById('part_type').value;
-            const specs = document.getElementById('piece_specs_container');
-            const label = document.getElementById('price_field_label');
-            if (type === 'MAIN_DOEUVRE') {
-                specs.classList.add('hidden');
-                label.innerText = "Montant HT (M.O)";
+        // Utility to safely set text content
+        function safeSetText(id, text) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerText = text;
             } else {
-                specs.classList.remove('hidden');
-                label.innerText = "Prix Unit. HT";
-                updateMatrixUI();
+                console.warn(`Element with id '${id}' not found for text update.`);
             }
         }
 
-        function calcAge() {
-            const m = document.getElementById('date_mec').value, s = document.getElementById('date_sinistre').value;
-            if(!m || !s) return;
-            const start = new Date(m), end = new Date(s);
-            let years = end.getFullYear() - start.getFullYear();
-            let months = end.getMonth() - start.getMonth();
-            if (months < 0) years--;
-            let yearStarted = years + 1;
-            document.getElementById('display_age').innerText = yearStarted + (yearStarted === 1 ? "ère année" : "ème année");
-            document.getElementById('detailed_duration').innerText = years + " ans révolus";
-            document.getElementById('calculated_year').value = yearStarted;
+        function formatFinance(num, withSuffix = true) {
+            let formatted = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num).replace(/\u00a0/g, " ");
+            return withSuffix ? formatted + " Dhs" : formatted;
+        }
+
+        window.handleEnter = function(e, el) {
+            if (e.key === "Enter") { updateVrade(); el.blur(); }
+        }
+
+        window.finalizeFormat = function(el, rawId) {
+            let cleanVal = el.value.replace(/\s/g, '').replace(',', '.');
+            let numeric = parseFloat(cleanVal) || 0;
+            document.getElementById(rawId).value = numeric;
+            el.value = formatFinance(numeric, false);
+            updateVrade();
+        }
+
+        window.getTaux = function(annee, cat, p, carb) {
+            if (cat === "Engins/Agricole") return 0;
+            if (annee >= 11) return 0.05;
+
+            let line = MATRICE.find(l => l.cat === cat && p >= l.pMin && p <= l.pMax && l.carb === carb);
+            if (!line) { line = MATRICE.find(l => l.cat === cat && p >= l.pMin && p <= l.pMax); }
+            return line ? line.ans[Math.min(annee - 1, 4)] : 0.10;
+        }
+
+        window.getReferenceKmPerYear = function(cat, carb) {
+            if (cat === "Motocycle") return 5000;
+            if (cat === "Engins/Agricole") return 1500; 
+            if (cat === "Bus et Camions" || cat === "Semi-Remorque") return 50000;
+            if (carb === "Diesel") return 25000;
+            return 20000; // Essence
+        }
+
+        window.toggleCorrectives = function() {
+            const container = document.getElementById('container_correctifs');
+            const chk = document.getElementById('chk_correctives');
             
-            updateMatrixUI();
-            recalculateExistingPartsRates();
-            renderTable();
+            if (chk.checked) {
+                container.classList.remove('hidden-section');
+                container.classList.add('visible-section');
+            } else {
+                container.classList.remove('visible-section');
+                container.classList.add('hidden-section');
+            }
+            updateVrade();
         }
 
-        function updateMatrixUI() {
-            const type = document.getElementById('part_type').value;
-            if (type === 'MAIN_DOEUVRE') return;
-            const cat = document.getElementById('cat_vehicule').value, year = parseInt(document.getElementById('calculated_year').value) || 1;
-            const matrix = MATRICES[type][cat];
-            const std = (year <= matrix.length) ? matrix[year-1] : matrix[matrix.length-1];
-            document.getElementById('matrix_val').innerText = std + "%";
-            document.getElementById('manual_rate').placeholder = "Auto: " + std + "%";
-        }
-
-        function handleSourceChange() {
-            const src = document.querySelector('input[name="part_source"]:checked').value;
-            document.getElementById('rate_container').classList.toggle('hidden', src === 'RECUPERABLE');
-            updateMatrixUI();
-        }
-
-        function getCalculatedRate() {
-            const type = document.getElementById('part_type').value;
-            if(type === 'MAIN_DOEUVRE') return 0;
-            const src = document.querySelector('input[name="part_source"]:checked').value;
-            if(src === 'RECUPERABLE') return 0;
-            const manual = document.getElementById('manual_rate').value;
-            if(manual !== "") return parseFloat(manual);
+        window.toggleTechReason = function() {
+            const container = document.getElementById('tech_reason_container');
+            const chk = document.getElementById('chk_tech_reform');
             
-            const cat = document.getElementById('cat_vehicule').value, year = parseInt(document.getElementById('calculated_year').value) || 1;
-            const matrix = MATRICES[type][cat];
-            const base = (year <= matrix.length) ? matrix[year-1] : matrix[matrix.length-1];
-            return src === 'ADAPTABLE' ? base * 0.5 : base;
+            if (chk.checked) {
+                container.classList.remove('hidden-section');
+                container.classList.add('visible-section');
+            } else {
+                container.classList.remove('visible-section');
+                container.classList.add('hidden-section');
+            }
+            updateVrade();
         }
 
-        function recalculateExistingPartsRates() {
-            const cat = document.getElementById('cat_vehicule').value;
-            const year = parseInt(document.getElementById('calculated_year').value) || 1;
-
-            parts.forEach(p => {
-                if(p.isManualRate || p.type === 'MAIN_DOEUVRE' || p.source === 'RECUPERABLE') return;
-                const matrix = MATRICES[p.type][cat];
-                const base = (year <= matrix.length) ? matrix[year-1] : matrix[matrix.length-1];
-                p.rate = (p.source === 'ADAPTABLE') ? base * 0.5 : base;
-            });
+        window.toggleEcoReason = function() {
+            const container = document.getElementById('eco_reason_container');
+            const chk = document.getElementById('chk_eco_reform');
+            
+            if (chk.checked) {
+                container.classList.remove('hidden-section');
+                container.classList.add('visible-section');
+            } else {
+                container.classList.remove('visible-section');
+                container.classList.add('hidden-section');
+            }
+            updateVrade();
         }
 
-        function addOrUpdatePart() {
-            const n = document.getElementById('part_name').value.trim(), p = parseFloat(document.getElementById('part_price').value), q = parseInt(document.getElementById('part_qty').value) || 1;
-            if(!p || !n) return;
+        // Nouvelle fonction pour récupérer les raisons cochées
+        window.getSelectedTechReasons = function() {
+            const checkboxes = document.querySelectorAll('input[name="tech_reason"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
 
-            const editId = document.getElementById('edit_part_id').value;
-            const type = document.getElementById('part_type').value;
-            const src = (type === 'MAIN_DOEUVRE') ? 'PRESTATION' : document.querySelector('input[name="part_source"]:checked').value;
-            const manualInput = document.getElementById('manual_rate').value;
-            const isManual = (manualInput !== "" && type !== 'MAIN_DOEUVRE' && src !== 'RECUPERABLE');
+        window.getSelectedEcoReasons = function() {
+            const checkboxes = document.querySelectorAll('input[name="eco_reason"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
 
-            if (editId) {
-                // UPDATE
-                const idx = parts.findIndex(x => x.id == editId);
-                if (idx > -1) {
-                    parts[idx] = {
-                        id: parseInt(editId),
-                        name: n,
-                        type: type,
-                        qty: q,
-                        price: p,
-                        source: src,
-                        rate: getCalculatedRate(),
-                        isManualRate: isManual
-                    };
-                    showToast("Ligne modifiée", "info");
+        window.updateVrade = function() {
+            let valNeuve = parseFloat(document.getElementById('v_valeur_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
+            let montantDevis = parseFloat(document.getElementById('v_devis_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
+            let accordDevis = parseFloat(document.getElementById('v_accord_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
+            
+            // Set raw for accord
+            document.getElementById('v_accord_raw').value = accordDevis;
+
+            const useCorrectives = document.getElementById('chk_correctives').checked;
+            let kmCompteur = 0;
+            let entretienPercent = 0;
+
+            if (useCorrectives) {
+                kmCompteur = parseFloat(document.getElementById('v_km_compteur').value) || 0;
+                entretienPercent = parseFloat(document.getElementById('v_entretien').value) || 0;
+            }
+
+            // Logic Tech Reform
+            const isTechReform = document.getElementById('chk_tech_reform').checked;
+            const selectedTechReasons = getSelectedTechReasons();
+            const techReasonDisplay = selectedTechReasons.length > 0 ? selectedTechReasons.join(", ") : "Aucun motif sélectionné";
+
+            // --- UI HIDING LOGIC FOR AUDIT TABLE ---
+            const uiAuditSection = document.getElementById('ui-audit-section');
+            if (isTechReform) {
+                uiAuditSection.style.display = 'none';
+            } else {
+                uiAuditSection.style.display = 'block';
+            }
+
+            document.getElementById('v_valeur_raw').value = valNeuve;
+            document.getElementById('v_devis_raw').value = montantDevis;
+
+            const dmecInput = document.getElementById('v_dmec').value;
+            const sinistreInput = document.getElementById('v_sinistre').value;
+            const cat = document.getElementById('v_cat').value;
+            const pf = parseInt(document.getElementById('v_pf').value) || 0;
+            const carb = document.getElementById('v_carb').value;
+
+            if(!dmecInput || !sinistreInput || valNeuve <= 0) return;
+
+            const dmec = new Date(dmecInput);
+            const sinistre = new Date(sinistreInput);
+            const tableRows = [];
+            const labels = ["Neuf"];
+            const plotData = [valNeuve];
+
+            let valAct = valNeuve;
+            let dAnniv = new Date(dmec);
+            let annee = 1;
+
+            while(true) {
+                let dStart = new Date(dAnniv);
+                let dNext = new Date(dStart);
+                dNext.setFullYear(dStart.getFullYear() + 1);
+                let dEndEff = dNext > sinistre ? new Date(sinistre) : new Date(dNext.getTime() - 86400000);
+                const jours = Math.ceil(Math.abs(dEndEff - dStart) / 86400000) + 1;
+                const t = getTaux(annee, cat, pf, carb);
+                const perte = dNext > sinistre ? (valAct * t * (jours / 365)) : (valAct * t);
+                const valFin = valAct - perte;
+
+                tableRows.push({ annee, start: dStart, end: dEndEff, t, valDeb: valAct, perte, valFin, jours });
+                labels.push("An " + annee);
+                plotData.push(valFin);
+
+                if(dNext > sinistre) break;
+                valAct = valFin;
+                dAnniv = dNext;
+                annee++;
+            }
+
+            const valBase = tableRows[tableRows.length - 1].valFin;
+            const ageAnnees = (sinistre - dmec) / (1000 * 60 * 60 * 24 * 365.25);
+            
+            let montantAdjKm = 0;
+            let montantAdjEntretien = 0;
+
+            if (useCorrectives) {
+                const refKmAn = getReferenceKmPerYear(cat, carb);
+                const kmTheorique = refKmAn * ageAnnees;
+                let ratioKm = 0;
+                if(kmTheorique > 0) {
+                    ratioKm = ((kmCompteur - kmTheorique) / kmTheorique) / 2;
                 }
-                cancelEdit();
+                if(ratioKm > 0.20) ratioKm = 0.20;
+                if(ratioKm < -0.20) ratioKm = -0.20;
+                montantAdjKm = valBase * (-ratioKm);
+
+                montantAdjEntretien = valBase * (entretienPercent / 100);
+
+                const adjKmEl = document.getElementById('disp_adj_km');
+                adjKmEl.innerText = (montantAdjKm >= 0 ? "+" : "") + formatFinance(montantAdjKm);
+                adjKmEl.className = montantAdjKm >= 0 ? "font-bold text-emerald-500" : "font-bold text-rose-500";
+
+                const adjEntEl = document.getElementById('disp_adj_ent');
+                adjEntEl.innerText = (montantAdjEntretien >= 0 ? "+" : "") + formatFinance(montantAdjEntretien);
+                adjEntEl.className = montantAdjEntretien >= 0 ? "font-bold text-emerald-500" : "font-bold text-rose-500";
+            }
+
+            // Calcul valeur technique "brute" (avant majoration marché)
+            const valTechnique = valBase + montantAdjKm + montantAdjEntretien;
+
+            // --- NOUVELLE LOGIQUE MAJORATION MARCHÉ ---
+            const marketPercent = parseInt(document.getElementById('v_market_boost').value) || 0;
+            const marketValueAdded = valTechnique * (marketPercent / 100);
+            const valFinale = valTechnique + marketValueAdded; // C'est la VRADE Finale
+
+            // Mise à jour UI Majoration
+            document.getElementById('market-percent-display').innerText = "+" + marketPercent + "%";
+            document.getElementById('market-value-added').innerText = "+" + formatFinance(marketValueAdded);
+            document.getElementById('kpi-final-retained').innerText = formatFinance(valFinale);
+
+            // --- NOUVELLE LOGIQUE SEUIL : OPTION APPLY TO THRESHOLD ---
+            const applyToThreshold = document.getElementById('chk_apply_to_threshold').checked;
+            
+            let baseForThreshold = valBase;
+            if (applyToThreshold) {
+                baseForThreshold = valTechnique; 
+            }
+            const seuilReform = (baseForThreshold * 2) / 3;
+            
+            // Logic Eco Reform (Math)
+            // Note: If Accord exists AND Accord > Threshold, it triggers Math Reform too
+            let referenceCost = montantDevis;
+            if (accordDevis > 0) {
+                referenceCost = accordDevis;
+            }
+            const isEcoReformMath = referenceCost > seuilReform;
+            
+            // Logic Eco Reform (Manual)
+            const isEcoReformManual = document.getElementById('chk_eco_reform').checked;
+            
+            // On combine les raisons
+            let ecoReasonsList = [];
+            // 1. Math check
+            if (isEcoReformMath) {
+                let labelCost = accordDevis > 0 ? "Accord" : "Devis";
+                ecoReasonsList.push(`${labelCost} (${formatFinance(referenceCost, false)}) > Seuil 2/3 (${formatFinance(seuilReform, false)})`);
+            }
+            // 2. Manual checks
+            if (isEcoReformManual) {
+                const manualReasons = getSelectedEcoReasons();
+                ecoReasonsList = ecoReasonsList.concat(manualReasons);
+            }
+            const ecoReasonDisplay = ecoReasonsList.length > 0 ? ecoReasonsList.join("<br>") : "Aucun motif sélectionné";
+            
+            // Mise à jour label
+            const labelSeuil = document.getElementById('kpi-seuil-label');
+            if (applyToThreshold) {
+                labelSeuil.innerText = "Seuil Réforme (2/3 Tech.)";
+                document.getElementById('dash_recap_seuil_label').innerText = "Seuil (2/3 Tech.)";
             } else {
-                // CREATE
-                parts.push({ 
-                    id: Date.now(), 
-                    name: n, 
-                    type: type, 
-                    qty: q, 
-                    price: p, 
-                    source: src, 
-                    rate: getCalculatedRate(),
-                    isManualRate: isManual 
-                });
-                showToast("Ligne ajoutée", "success");
-            }
-            
-            renderTable();
-            if(!editId) resetFormPart();
-            saveState(); // Save explicit
-        }
-
-        function editPart(id) {
-            const p = parts.find(x => x.id === id);
-            if(!p) return;
-
-            // UI Mode Edition
-            document.getElementById('piece_form_card').classList.add('editing-mode-border');
-            document.getElementById('form_title').innerText = "Modifier Article";
-            document.getElementById('btn_cancel_edit').classList.remove('hidden');
-            document.getElementById('btn_action_part').innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Enregistrer Modification';
-            document.getElementById('btn_action_part').className = "w-full py-4 bg-amber-500 text-white rounded-xl text-xs font-black shadow-xl uppercase tracking-widest hover:bg-amber-600 transition-all";
-
-            // Populate Form
-            document.getElementById('edit_part_id').value = p.id;
-            document.getElementById('part_type').value = p.type;
-            toggleFormContext();
-            
-            document.getElementById('part_name').value = p.name;
-            document.getElementById('part_price').value = p.price;
-            document.getElementById('part_qty').value = p.qty;
-            
-            if(p.type !== 'MAIN_DOEUVRE') {
-                document.querySelector(`input[name="part_source"][value="${p.source}"]`).checked = true;
-                handleSourceChange();
-                if(p.isManualRate) document.getElementById('manual_rate').value = p.rate;
+                labelSeuil.innerText = "Seuil Réforme (2/3 Base)";
+                document.getElementById('dash_recap_seuil_label').innerText = "Seuil (2/3 Base)";
             }
 
-            document.getElementById('part_name').focus();
-        }
-
-        function cancelEdit() {
-            document.getElementById('edit_part_id').value = "";
-            document.getElementById('piece_form_card').classList.remove('editing-mode-border');
-            document.getElementById('form_title').innerText = "Nouvel Article";
-            document.getElementById('btn_cancel_edit').classList.add('hidden');
-            document.getElementById('btn_action_part').innerHTML = '<i class="fa-solid fa-plus mr-2"></i> Ajouter au tableau';
-            document.getElementById('btn_action_part').className = "w-full py-4 bg-indigo-700 text-white rounded-xl text-xs font-black shadow-xl uppercase tracking-widest hover:bg-indigo-800 active:scale-95 transition-all";
-            resetFormPart();
-        }
-
-        function deletePart(id) {
-            if(confirm("Supprimer cette ligne ?")) {
-                parts = parts.filter(x => x.id !== id);
-                renderTable();
-                saveState();
-                showToast("Ligne supprimée", "error");
-            }
-        }
-
-        function clearPartsOnly() {
-            if(confirm("Vider uniquement le tableau (garder infos véhicule) ?")) {
-                parts = [];
-                renderTable();
-                saveState();
-                showToast("Tableau vidé", "success");
-            }
-        }
-
-        // --- RENDER & UTILS ---
-        function renderTable() {
-            const tbody = document.getElementById('parts_table_body'), empty = document.getElementById('empty_msg');
-            tbody.innerHTML = "";
-            if(parts.length === 0) { empty.classList.remove('hidden'); updateTotalDisplay(0,0,0); return; }
-            empty.classList.add('hidden');
-            let tNetHT = 0, tTVA = 0, tVet = 0;
-            
-            // Tri inversé (dernier ajouté en haut) pour meilleure visibilité
-            [...parts].reverse().forEach(p => {
-                const base = p.price * p.qty, v = base * (p.rate / 100), nht = base - v, rowTVA = (p.source === 'RECUPERABLE' && p.type !== 'MAIN_DOEUVRE') ? 0 : nht * 0.2;
-                tNetHT += nht; tTVA += rowTVA; tVet += v;
-                const rateDisplay = p.isManualRate ? `<span class="text-rose-600 font-bold underline decoration-dotted" title="Taux manuel">${p.rate}%</span>` : `<span class="text-rose-600 font-bold">${p.rate}%</span>`;
+            tableDataForPDF = tableRows;
+            finalCalculation = {
+                valBase: valBase,
+                adjKm: montantAdjKm,
+                adjEntretien: montantAdjEntretien,
+                marketPercent: marketPercent,
+                marketValueAdded: marketValueAdded,
+                valFinale: valFinale, // VRADE
+                valTechnique: valTechnique, // Base + Correctifs (Sans marché)
+                seuil: seuilReform,
+                km: kmCompteur,
+                useCorrectives: useCorrectives,
+                accordDevis: accordDevis, // New prop
                 
-                tbody.innerHTML += `
-                <tr class="hover:bg-slate-50 group border-b border-slate-100">
-                    <td class="p-5 font-bold text-slate-800 sticky-col">${p.name}</td>
-                    <td class="p-5 text-center"><span class="px-2 py-1 rounded text-[10px] font-black border ${p.source === 'ORIGINE' ? 'bg-blue-50 text-blue-800 border-blue-200' : p.source === 'ADAPTABLE' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'}">${p.source}</span></td>
-                    <td class="p-5 text-center font-bold">${p.qty}</td>
-                    <td class="p-5 text-center font-mono text-slate-500 font-semibold">${formatMoney(p.price)}</td>
-                    <td class="p-5 text-center">${rateDisplay}</td>
-                    <td class="p-5 text-center font-mono font-black text-indigo-800 bg-indigo-50/50 rounded-lg">${formatMoney(nht + rowTVA)}</td>
-                    <td class="p-5 text-right flex justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="editPart(${p.id})" class="p-2 bg-amber-100 text-amber-600 rounded-lg hover:bg-amber-200" title="Modifier"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deletePart(${p.id})" class="p-2 bg-rose-100 text-rose-600 rounded-lg hover:bg-rose-200" title="Supprimer"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
-            updateTotalDisplay(tNetHT, tTVA, tVet);
-        }
-
-        function formatMoney(n) { return new Intl.NumberFormat('fr-MA', { minimumFractionDigits: 2 }).format(n); }
-        function updateTotalDisplay(netHT, tva, vet) {
-            document.getElementById('sum_net_ht').innerText = formatMoney(netHT);
-            document.getElementById('sum_vetuste').innerText = formatMoney(vet);
-            document.getElementById('sum_net_ttc').innerText = formatMoney(netHT + tva);
-        }
-        function updateIndemnite() {
-            const vv = parseFloat(document.getElementById('val_venale').value) || 0, ve = parseFloat(document.getElementById('val_epave').value) || 0;
-            document.getElementById('indemnite_display').innerText = formatMoney(vv - ve) + " DH";
-            saveDataDebounced();
-        }
-        function toggleChoc(zone, btn) {
-            const idx = selectedChocs.indexOf(zone);
-            if (idx > -1) { selectedChocs.splice(idx, 1); btn.classList.remove('active'); } 
-            else { selectedChocs.push(zone); btn.classList.add('active'); }
-            document.getElementById('veh_choc_value').value = selectedChocs.join(', ');
-            document.getElementById('choc_display_ui').innerText = selectedChocs.join(', ') || "Aucune zone sélectionnée";
-            saveDataDebounced();
-        }
-
-        // --- NOTIFICATIONS ---
-        function showToast(msg, type='info') {
-            const c = document.getElementById('toast-container');
-            const d = document.createElement('div');
-            d.className = 'toast';
-            d.innerHTML = type === 'success' ? `<i class="fa-solid fa-check-circle text-green-400"></i> ${msg}` : type === 'error' ? `<i class="fa-solid fa-circle-exclamation text-rose-400"></i> ${msg}` : `<i class="fa-solid fa-info-circle text-blue-400"></i> ${msg}`;
-            c.appendChild(d);
-            setTimeout(() => { d.style.opacity='0'; setTimeout(()=>d.remove(),300); }, 3000);
-        }
-
-        // --- PDF (IDENTIQUE AVEC DATA LIVE) ---
-        function updatePDFData() {
-            // Remplit le template caché
-            const ref = document.getElementById('ref_dossier').value || "S/R";
-            const setClassText = (cls, val) => { document.querySelectorAll('.' + cls).forEach(el => el.innerText = val || "--"); };
-
-            setClassText('pdf_ref', ref);
-            setClassText('pdf_date', new Date().toLocaleDateString('fr-FR'));
-            setClassText('pdf_assure', document.getElementById('assure_name').value);
-            setClassText('pdf_cie', document.getElementById('cie_assurance').value);
-            setClassText('pdf_requerant', document.getElementById('requerant').value); // NEW
-            setClassText('pdf_ref_sinistre', document.getElementById('ref_sinistre').value);
-            setClassText('pdf_immat', document.getElementById('ref_immat').value);
-            setClassText('pdf_vehicule', (document.getElementById('veh_make').value + " " + document.getElementById('veh_model').value).trim());
-            
-            // New Vehicle Fields for PDF
-            const genre = document.getElementById('veh_genre').value || "--";
-            const puiss = document.getElementById('veh_puissance').value || "--";
-            setClassText('pdf_genre_puiss', `${genre} / ${puiss}`);
-            
-            const chassis = document.getElementById('veh_chassis').value || "--";
-            const carb = document.getElementById('veh_carburant').value;
-            setClassText('pdf_chassis_carb', `${chassis} / ${carb}`);
-
-            setClassText('pdf_mec', document.getElementById('date_mec').value);
-            setClassText('pdf_sinistre', document.getElementById('date_sinistre').value);
-            setClassText('pdf_visite', document.getElementById('date_visite').value); // NEW
-            setClassText('pdf_km', (document.getElementById('veh_km').value || "--") + " KM");
-            setClassText('pdf_pneus', document.getElementById('veh_pneus').value || "--"); // NEW
-            setClassText('pdf_etat', document.getElementById('veh_etat').value || "--"); // NEW
-            
-            setClassText('pdf_choc', document.getElementById('veh_choc_value').value || "NON IDENTIFIÉ");
-            setClassText('pdf_age', document.getElementById('display_age').innerText);
-            setClassText('pdf_mission', document.getElementById('date_mission').value);
-            
-            const vv = parseFloat(document.getElementById('val_venale').value) || 0;
-            const ve = parseFloat(document.getElementById('val_epave').value) || 0;
-            const valVenaleInput = document.getElementById('val_venale').value;
-            const valEpaveInput = document.getElementById('val_epave').value;
-
-            // Logique conditionnelle pour le bloc Réforme
-            const reformeBlock = document.getElementById('pdf_reforme_block');
-            if (valVenaleInput && valEpaveInput) {
-                reformeBlock.style.display = 'block';
-                setClassText('pdf_val_venale', formatMoney(vv) + " DH");
-                setClassText('pdf_val_epave', formatMoney(ve) + " DH");
-                setClassText('pdf_net_a_dire', formatMoney(vv - ve) + " DH");
-            } else {
-                reformeBlock.style.display = 'none';
-            }
-
-            // Observations (New)
-            const obs = document.getElementById('expert_obs').value;
-            setClassText('pdf_observations', obs || "R.A.S");
-
-            const pdfBody = document.querySelector('#pdf-template-source .pdf_table_body'); pdfBody.innerHTML = "";
-            let tHT = 0, tTVA = 0, tVet = 0;
-            parts.forEach(p => {
-                const base = p.price * p.qty, v = base * (p.rate / 100), nht = base - v, rowTVA = (p.source === 'RECUPERABLE' && p.type !== 'MAIN_DOEUVRE') ? 0 : nht * 0.2;
-                tHT += nht; tTVA += rowTVA; tVet += v;
-                pdfBody.innerHTML += `<tr><td style="padding: 10px; border: 1px solid #1e3a8a; vertical-align: middle;"><strong>${p.name}</strong><br><small style="color:#64748b;">[${p.source}]</small></td><td style="padding: 10px 5px; border: 1px solid #1e3a8a; text-align:center;">${p.qty}</td><td style="padding: 10px; border: 1px solid #1e3a8a; text-align:right;">${formatMoney(p.price)}</td><td style="padding: 10px 5px; border: 1px solid #1e3a8a; text-align:center; color: #ef4444; font-weight: 800;">${p.rate}%</td><td style="padding: 10px; border: 1px solid #1e3a8a; text-align:right; font-weight:900; color: #1e3a8a;">${formatMoney(nht + rowTVA)}</td></tr>`;
-            });
-            setClassText('pdf_final_ht', formatMoney(tHT) + " DH");
-            setClassText('pdf_final_vet', "-" + formatMoney(tVet) + " DH");
-            setClassText('pdf_final_ttc', formatMoney(tHT + tTVA) + " DH");
-            setClassText('pdf_montant_lettres', numberToFrench(tHT + tTVA));
-        }
-
-        function openPreview() {
-            // Restriction supprimée
-            updatePDFData();
-            document.getElementById('preview-paper').innerHTML = document.getElementById('pdf-template-source').innerHTML;
-            document.getElementById('preview-modal').style.display = 'flex';
-        }
-
-        function closePreview() { document.getElementById('preview-modal').style.display = 'none'; }
-
-        async function generatePDFFromPreview() {
-            const btn = document.getElementById('btn-dl-pdf');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> TRAITEMENT...';
-            const element = document.getElementById('preview-paper');
-            const ref = document.getElementById('ref_dossier').value || "SR";
-            
-            // OPTIONS CRITIQUES POUR EVITER LE DEBORDEMENT
-            const opt = { 
-                margin: 0, // MARGE ZERO pour laisser le CSS gérer
-                filename: `Expertise_BETCAM_${ref.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`, 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                isTechReform: isTechReform,
+                techReasons: selectedTechReasons,
+                techReasonDisplay: techReasonDisplay,
+                
+                isEcoReformManual: isEcoReformManual,
+                ecoReasons: ecoReasonsList,
+                ecoReasonDisplay: ecoReasonDisplay,
+                
+                isEcoReformMath: isEcoReformMath,
+                applyToThreshold: applyToThreshold,
+                anciennete: `${annee-1} ans, ${tableRows[tableRows.length-1].jours} jrs`
             };
             
-            try { await html2pdf().from(element).set(opt).save(); } catch(e) { console.error("PDF Error:", e); alert("Erreur PDF."); } finally { btn.innerHTML = originalText; }
-        }
+            window.latestCalculation = finalCalculation;
 
-        // FONCTION D'IMPRESSION ROBUSTE (FIX V63)
-        function printReport() {
-            try { window.focus(); } catch(e){}
-            setTimeout(() => { window.print(); }, 50);
-        }
+            document.getElementById('label-vv-type').innerText = useCorrectives ? "Corrigée" : "Standard";
+            document.getElementById('label-vv-sub').innerText = useCorrectives ? "Incluant correctifs KM & Entretien" : "Calcul sur dépréciation temporelle uniquement";
 
-        // Helpers
-        function showSuggestions() {
-            const input = document.getElementById('part_name'), ul = document.getElementById('custom_suggestions'), type = document.getElementById('part_type').value;
-            ul.innerHTML = "";
-            PARTS_DB[type].sort().forEach(m => {
-                const li = document.createElement('li'); li.className="suggestion-item font-bold text-slate-700"; li.textContent=m;
-                li.onclick = () => { input.value = m; ul.classList.add('hidden'); document.getElementById('part_price').focus(); };
-                ul.appendChild(li);
-            });
-            ul.classList.remove('hidden');
-        }
-        function filterSuggestions() { const filter = document.getElementById('part_name').value.toUpperCase(); document.querySelectorAll('.suggestion-item').forEach(li => li.style.display = li.textContent.toUpperCase().includes(filter) ? "" : "none"); }
-        function resetSuggestions() { setTimeout(() => document.getElementById('custom_suggestions').classList.add('hidden'), 200); }
-        function resetFormPart() { document.getElementById('part_name').value = ""; document.getElementById('part_price').value = ""; document.getElementById('manual_rate').value = ""; document.getElementById('part_qty').value = "1"; }
-        function numberToFrench(amount) {
-            const units = ["", "UN", "DEUX", "TROIS", "QUATRE", "CINQ", "SIX", "SEPT", "HUIT", "NEUF"];
-            const teens = ["DIX", "ONZE", "DOUZE", "TREIZE", "QUATORZE", "QUINZE", "SEIZE", "DIX-SEPT", "DIX-HUIT", "DIX-NEUF"];
-            const tens = ["", "DIX", "VINGT", "TRENTE", "QUARANTE", "CINQUANTE", "SOIXANTE", "SOIXANTE-DIX", "QUATRE-VINGT", "QUATRE-VINGT-DIX"];
-            function convert(n) {
-                if (n < 10) return units[n];
-                if (n < 20) return teens[n - 10];
-                if (n < 100) { let t = Math.floor(n / 10), r = n % 10; if (t === 7 || t === 9) return tens[t-1] + "-" + convert(r + 10); return tens[t] + (r > 0 ? (r === 1 ? "-ET-" : "-") + units[r] : ""); }
-                if (n < 1000) { let c = Math.floor(n / 100), r = n % 100; return (c === 1 ? "" : units[c]) + " CENT" + (r > 0 ? " " + convert(r) : ""); }
-                if (n < 1000000) { let m = Math.floor(n / 1000), r = n % 1000; return (m === 1 ? "" : convert(m)) + " MILLE" + (r > 0 ? " " + convert(r) : ""); }
-                return n.toString();
+            document.getElementById('kpi-vv-final').innerText = formatFinance(valFinale);
+            document.getElementById('kpi-val-base').innerText = formatFinance(valBase);
+            const totalImpact = montantAdjKm + montantAdjEntretien;
+            const impactEl = document.getElementById('kpi-impact-total');
+            impactEl.innerText = (totalImpact >= 0 && totalImpact > 0 ? "+" : "") + formatFinance(totalImpact);
+            impactEl.className = totalImpact >= 0 ? "text-lg font-medium text-emerald-400 font-mono-num" : "text-lg font-medium text-rose-400 font-mono-num";
+            
+            document.getElementById('kpi-anciennete').innerText = finalCalculation.anciennete;
+            document.getElementById('kpi-seuil').innerText = formatFinance(seuilReform);
+
+            document.getElementById('dash_recap_val_neuf').innerText = formatFinance(valNeuve);
+            document.getElementById('dash_recap_val_base').innerText = formatFinance(valBase);
+            document.getElementById('dash_recap_impact').innerText = (totalImpact >= 0 && totalImpact > 0 ? "+" : "") + formatFinance(totalImpact);
+            
+            // "Valeur Vénale Technique" dans le tableau recap = Valeur Technique
+            document.getElementById('dash_recap_val_venale').innerText = formatFinance(valTechnique);
+            document.getElementById('dash_recap_seuil').innerText = formatFinance(seuilReform);
+
+            const decisionBox = document.getElementById('decision-box');
+            const decisionLabel = document.getElementById('decision-label');
+            const decisionSub = document.getElementById('decision-sub');
+            const decisionReason = document.getElementById('decision-reason');
+            
+            // --- DECISION LOGIC START ---
+            
+            // 1. Priority: Tech Reform (Always overrides)
+            if (isTechReform) {
+                decisionBox.className = "decision-card bg-red-100 p-8 rounded-[2.5rem] pro-shadow border-t-8 border-red-800 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden";
+                decisionLabel.innerText = "RÉFORME TECHNIQUE";
+                decisionLabel.className = "text-2xl md:text-3xl font-extrabold text-red-900 tracking-tight";
+                decisionSub.classList.remove('hidden');
+                
+                if(selectedTechReasons.length > 1) {
+                    decisionReason.innerText = selectedTechReasons.length + " critères identifiés (voir PDF)";
+                    decisionReason.className = "block mt-1 font-bold text-red-700";
+                } else {
+                    decisionReason.innerText = techReasonDisplay;
+                    decisionReason.className = "block mt-1 font-bold text-red-700";
+                }
+            } 
+            // 2. Special Case: ACCORD ON DEVIS < THRESHOLD (Overrides Eco Reform if Accord is provided and valid)
+            else if (accordDevis > 0 && accordDevis <= seuilReform) {
+                decisionBox.className = "decision-card bg-emerald-100 p-8 rounded-[2.5rem] pro-shadow border-t-8 border-emerald-600 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden";
+                decisionLabel.innerText = "RÉPARATION (ACCORD)";
+                decisionLabel.className = "text-2xl md:text-3xl font-bold text-emerald-800 tracking-tight";
+                decisionSub.classList.remove('hidden');
+                
+                decisionReason.innerHTML = `Accord (${formatFinance(accordDevis, false)}) < Seuil 2/3`;
+                decisionReason.className = "block mt-1 font-bold text-emerald-700";
             }
-            let intPart = Math.floor(amount), decPart = Math.round((amount - intPart) * 100);
-            return convert(intPart) + " DIRHAMS" + (decPart > 0 ? " ET " + convert(decPart) + " CENTIMES" : " ET ZÉRO CENTIMES");
+            // 3. Priority: Eco Reform (Math or Manual)
+            else if (isEcoReformManual || isEcoReformMath) {
+                decisionBox.className = "decision-card bg-orange-50 p-8 rounded-[2.5rem] pro-shadow border-t-8 border-orange-500 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden";
+                decisionLabel.innerText = "RÉFORME ÉCONOMIQUE";
+                decisionLabel.className = "text-2xl md:text-3xl font-bold text-orange-600 tracking-tight";
+                decisionSub.classList.remove('hidden');
+                
+                if(ecoReasonsList.length > 1) {
+                    decisionReason.innerHTML = ecoReasonsList.length + " critères identifiés (voir PDF)";
+                    decisionReason.className = "block mt-1 font-bold text-orange-700";
+                } else {
+                    decisionReason.innerHTML = ecoReasonDisplay; 
+                    decisionReason.className = "block mt-1 font-bold text-orange-700";
+                }
+            } 
+            // 4. Default: Repair
+            else {
+                decisionSub.classList.add('hidden');
+                if (montantDevis > 0) {
+                    decisionBox.className = "decision-card bg-emerald-50 p-8 rounded-[2.5rem] pro-shadow border-t-8 border-emerald-500 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden";
+                    decisionLabel.innerText = "RÉPARATION DU VÉHICULE";
+                    decisionLabel.className = "text-2xl md:text-3xl font-medium text-emerald-700";
+                } else {
+                    // Default state
+                    decisionBox.className = "decision-card bg-white p-8 rounded-[2.5rem] pro-shadow border-t-8 border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden";
+                    decisionLabel.innerText = "En attente de saisie";
+                    decisionLabel.className = "text-2xl md:text-3xl font-medium text-slate-900 leading-tight";
+                }
+            }
+
+            document.getElementById('vradeTable').innerHTML = tableDataForPDF.map(r => `
+                <tr class="hover:bg-indigo-50/20 transition-colors">
+                    <td class="p-6 text-slate-500 font-medium">Année ${r.annee}</td>
+                    <td class="p-6 text-sm text-slate-900 font-normal">${r.start.toLocaleDateString('fr-FR')} au ${r.end.toLocaleDateString('fr-FR')}</td>
+                    <td class="p-6 text-center text-slate-600 font-medium">${(r.t*100).toFixed(0)}%</td>
+                    <td class="p-6 text-right text-slate-600">${formatFinance(r.valDeb, false)}</td>
+                    <td class="p-6 text-right text-rose-400 font-medium">-${formatFinance(r.perte, false)}</td>
+                    <td class="p-6 text-right text-slate-800 font-bold">${formatFinance(r.valFin, false)}</td>
+                    <td class="p-6 text-center text-slate-400 font-medium">${r.jours}</td>
+                </tr>
+            `).join('');
+
+            updateCharts(labels, plotData, valFinale, valNeuve - valFinale);
         }
-        function resetApp() { if(confirm("Tout effacer ?")) { localStorage.removeItem('betcam_expert_v47'); location.reload(); } }
+
+        window.updateCharts = function(labels, values, finalVal, lossVal) {
+            if(chartEvo) chartEvo.destroy();
+            if(chartDist) chartDist.destroy();
+            const ctx1 = document.getElementById('chartEvo').getContext('2d');
+            chartEvo = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{ label: 'Valeur résiduelle', data: values, borderColor: '#1e3a8a', backgroundColor: 'rgba(30, 58, 138, 0.05)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#fff', pointBorderWidth: 3 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => formatFinance(v, false) } } } }
+            });
+            const ctx2 = document.getElementById('chartDist').getContext('2d');
+            const gradGreen = ctx2.createLinearGradient(0, 0, 0, 400);
+            gradGreen.addColorStop(0, '#10b981'); gradGreen.addColorStop(1, '#065f46'); 
+            const gradRed = ctx2.createLinearGradient(0, 0, 0, 400);
+            gradRed.addColorStop(0, '#f43f5e'); gradRed.addColorStop(1, '#9f1239'); 
+            chartDist = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Valeur Restante', 'Dépréciation'],
+                    datasets: [{ data: [finalVal, lossVal], backgroundColor: [gradGreen, gradRed], borderWidth: 0, hoverOffset: 15, borderRadius: 0 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, padding: 30, font: {size: 11, weight: '700'}, color: '#1e3a8a' } },
+                        datalabels: {
+                            color: '#ffffff', font: { weight: 'bold', size: 12, family: 'Inter' },
+                            textShadowColor: 'rgba(0,0,0,0.7)', textShadowBlur: 8,
+                            formatter: (value, ctx) => {
+                                let sum = 0;
+                                ctx.chart.data.datasets[0].data.map(data => { sum += data; });
+                                return (value * 100 / sum).toFixed(1) + "%";
+                            },
+                            anchor: 'center', align: 'center', display: (context) => context.dataset.data[context.dataIndex] > 0
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- GÉNÉRATION DU PDF VIA TEMPLATE ---
+        window.formatDateToFrench = function(dateStr) {
+            if (!dateStr) return "--/--/----";
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        window.downloadExpertisePDF = function() {
+            const valNeuve = document.getElementById('v_valeur_raw').value;
+            if(parseFloat(valNeuve) <= 0) {
+                alert("Veuillez d'abord effectuer un calcul complet.");
+                return;
+            }
+
+            if (typeof html2pdf === 'undefined') {
+                alert("La librairie PDF n'est pas chargée. Vérifiez votre connexion internet.");
+                return;
+            }
+            
+            // Renamed for clarity and safety
+            const pdfTemplate = document.getElementById('pdf-export-template'); 
+            
+            if (!pdfTemplate) {
+                alert("Erreur: Le modèle PDF est introuvable.");
+                return;
+            }
+            
+            // Re-fetch reference for filename logic specifically
+            const refInput = document.getElementById('v_ref');
+            const refDossier = refInput ? refInput.value.trim() : '';
+
+            // Update PDF Content
+            safeSetText('pdf-ref-display', refDossier ? refDossier : "VRADE-AUTOGEN");
+            
+            const mat = document.getElementById('v_mat').value || '--';
+            safeSetText('pdf-mat', mat);
+
+            // New fields update
+            const nomAssure = document.getElementById('v_nom_assure').value || '--';
+            safeSetText('pdf-nom-assure', nomAssure);
+            
+            // === NOUVEAU CHAMP COMPAGNIE ===
+            const cieAssurance = document.getElementById('v_cie_assurance').value || '--';
+            safeSetText('pdf-cie-assurance', cieAssurance);
+
+            const numSinistre = document.getElementById('v_num_sinistre').value || '--';
+            safeSetText('pdf-num-sinistre', numSinistre);
+
+            const marqueModele = document.getElementById('v_marque_modele').value || '--';
+            safeSetText('pdf-marque-modele', marqueModele);
+
+            // --- MISE A JOUR JS POUR L'ENERGIE ET LA PUISSANCE ---
+            const energie = document.getElementById('v_carb').value || '--';
+            safeSetText('pdf-energie', energie);
+
+            const puissance = document.getElementById('v_pf').value || '--';
+            safeSetText('pdf-puissance', puissance + " CV");
+            
+            // --- MISE A JOUR JS POUR LA CATEGORIE ---
+            const catSelect = document.getElementById('v_cat');
+            const catText = catSelect.options[catSelect.selectedIndex].text;
+            safeSetText('pdf-cat', catText);
+            // ----------------------------------------------------
+
+            const dateExpertise = document.getElementById('v_date_expertise').value;
+            safeSetText('pdf-date-expertise', formatDateToFrench(dateExpertise));
+
+            safeSetText('pdf-date-now', new Date().toLocaleDateString('fr-FR'));
+            safeSetText('pdf-val-neuve', formatFinance(parseFloat(document.getElementById('v_valeur_raw').value)));
+            safeSetText('pdf-dmec', formatDateToFrench(document.getElementById('v_dmec').value));
+            safeSetText('pdf-sinistre', formatDateToFrench(document.getElementById('v_sinistre').value));
+            safeSetText('pdf-devis', formatFinance(parseFloat(document.getElementById('v_devis_raw').value)));
+            
+            // PDF Accord Handling
+            const accordVal = parseFloat(document.getElementById('v_accord_raw').value) || 0;
+            const rowAccord = document.getElementById('pdf-row-accord');
+            if(rowAccord) {
+                if(accordVal > 0) {
+                    safeSetText('pdf-accord', formatFinance(accordVal));
+                    rowAccord.style.display = 'table-row';
+                } else {
+                    rowAccord.style.display = 'none';
+                }
+            }
+
+            safeSetText('pdf-anciennete', finalCalculation.anciennete);
+            safeSetText('pdf-val-base', formatFinance(finalCalculation.valBase));
+            
+            // Update Recap Table in PDF
+            safeSetText('pdf-recap-val-neuf', formatFinance(parseFloat(document.getElementById('v_valeur_raw').value)));
+            safeSetText('pdf-recap-val-base', formatFinance(finalCalculation.valBase));
+            const totalImpact = finalCalculation.adjKm + finalCalculation.adjEntretien;
+            const impactSign = (totalImpact >= 0 && totalImpact > 0) ? "+" : "";
+            safeSetText('pdf-recap-impact', impactSign + formatFinance(totalImpact));
+            
+            // Valeur Technique before Market Boost
+            safeSetText('pdf-recap-val-venale', formatFinance(finalCalculation.valTechnique));
+            safeSetText('pdf-recap-seuil', formatFinance(finalCalculation.seuil));
+
+            const rowKm = document.getElementById('pdf-row-km');
+            const rowEnt = document.getElementById('pdf-row-ent');
+            
+            if (finalCalculation.useCorrectives) {
+                if(rowKm) {
+                    rowKm.style.display = 'table-row';
+                    safeSetText('pdf-km', finalCalculation.km + " km");
+                }
+                if(rowEnt) {
+                    rowEnt.style.display = 'table-row';
+                }
+                
+                const adjKmEl = document.getElementById('pdf-adj-km');
+                if (adjKmEl) {
+                    adjKmEl.innerText = (finalCalculation.adjKm >= 0 ? "+" : "") + formatFinance(finalCalculation.adjKm);
+                    adjKmEl.style.color = "#000";
+                }
+
+                const adjEntEl = document.getElementById('pdf-adj-entretien');
+                if (adjEntEl) {
+                    adjEntEl.innerText = (finalCalculation.adjEntretien >= 0 ? "+" : "") + formatFinance(finalCalculation.adjEntretien);
+                    adjEntEl.style.color = "#000";
+                }
+            } else {
+                if(rowKm) rowKm.style.display = 'none';
+                if(rowEnt) rowEnt.style.display = 'none';
+                safeSetText('pdf-km', "Non renseigné");
+            }
+
+            safeSetText('pdf-vv-final', formatFinance(finalCalculation.valFinale));
+            safeSetText('pdf-seuil', formatFinance(finalCalculation.seuil));
+            
+            // Update PDF label based on option
+            const pdfThresholdLabel = document.getElementById('pdf-seuil-label');
+            if (pdfThresholdLabel) {
+                 if (finalCalculation.applyToThreshold) {
+                    pdfThresholdLabel.innerText = "Seuil Réforme (2/3 VRADE)";
+                } else {
+                    pdfThresholdLabel.innerText = "Seuil Réforme (2/3 de Base)";
+                }
+            }
+            
+            const decBox = document.getElementById('pdf-decision-box');
+            const techReasonBox = document.getElementById('pdf-tech-reason');
+            const techReasonText = document.getElementById('pdf-tech-reason-text');
+            const pdfAuditSection = document.getElementById('pdf-audit-section');
+
+            if(finalCalculation.isTechReform) {
+                // PDF FOR TECHNICAL REFORM
+                if(decBox) {
+                    decBox.innerText = "RÉFORME TECHNIQUE";
+                    decBox.style.color = "#7f1d1d"; // Dark Red
+                    decBox.style.borderColor = "#7f1d1d";
+                    decBox.style.backgroundColor = "#fee2e2";
+                }
+                if(techReasonBox) techReasonBox.style.display = "block";
+                
+                // MULTI-REASON PDF FORMATTING
+                if(techReasonText) {
+                    if (finalCalculation.techReasons.length > 0) {
+                        const listHtml = finalCalculation.techReasons.map(r => `• ${r}`).join('<br>');
+                        techReasonText.innerHTML = "Motifs Techniques:<br>" + `<div style='padding-left:5px; margin-top:2px; font-weight:normal;'>${listHtml}</div>`;
+                    } else {
+                        techReasonText.innerText = "Motif : Non spécifié.";
+                    }
+                }
+                
+                // MODIFICATION : On affiche le tableau de dépréciation même en cas de réforme technique
+                if(pdfAuditSection) pdfAuditSection.style.display = 'block';
+            
+            // SPECIAL CASE: Accord Validé (Priorité sur Eco)
+            } else if (finalCalculation.accordDevis > 0 && finalCalculation.accordDevis <= finalCalculation.seuil) {
+                if(decBox) {
+                    decBox.innerText = "RÉPARATION (ACCORD VALIDÉ)";
+                    decBox.style.color = "#065f46"; // Green
+                    decBox.style.borderColor = "#065f46";
+                    decBox.style.backgroundColor = "#ecfdf5";
+                }
+                // Show reason why it's repair
+                if(techReasonBox) techReasonBox.style.display = "block";
+                if(techReasonText) {
+                    techReasonText.innerHTML = `<span style="color:#065f46">Accord (${formatFinance(finalCalculation.accordDevis, false)}) inférieur au Seuil 2/3.</span>`;
+                }
+                
+                if(pdfAuditSection) pdfAuditSection.style.display = 'block';
+
+            } else if (finalCalculation.isEcoReformManual || finalCalculation.isEcoReformMath) {
+                // PDF FOR ECONOMIC REFORM
+                if(decBox) {
+                    decBox.innerText = "RÉFORME ÉCONOMIQUE";
+                    decBox.style.color = "#c2410c"; // Orange/Red
+                    decBox.style.borderColor = "#c2410c";
+                    decBox.style.backgroundColor = "#fff7ed";
+                }
+                if(techReasonBox) techReasonBox.style.display = "block";
+                
+                if(techReasonText) {
+                    if (finalCalculation.ecoReasons.length > 0) {
+                         const listHtml = finalCalculation.ecoReasons.map(r => `• ${r}`).join('<br>');
+                         techReasonText.innerHTML = "Motifs Économiques:<br>" + `<div style='padding-left:5px; margin-top:2px; font-weight:normal;'>${listHtml}</div>`;
+                    } else {
+                         techReasonText.innerText = "Motif : Non spécifié";
+                    }
+                }
+
+                if(pdfAuditSection) pdfAuditSection.style.display = 'block';
+
+            } else {
+                // PDF FOR REPAIR
+                if(techReasonBox) techReasonBox.style.display = "none";
+                if(pdfAuditSection) pdfAuditSection.style.display = 'block';
+                
+                if(decBox) {
+                    decBox.innerText = "RÉPARATION DU VÉHICULE";
+                    decBox.style.color = "#065f46";
+                    decBox.style.borderColor = "#065f46";
+                    decBox.style.backgroundColor = "#fff";
+                }
+            }
+
+            // Génération des lignes du tableau PDF avec plus de padding
+            document.getElementById('pdf-table-body').innerHTML = tableDataForPDF.map(r => `
+                <tr>
+                    <td style="padding: 4px 6px; border: 1px solid #e2e8f0;">Année ${r.annee}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #e2e8f0;">${r.start.toLocaleDateString()} au ${r.end.toLocaleDateString()}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: center;">${(r.t*100).toFixed(0)}%</td>
+                    <td style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: right;">-${formatFinance(r.perte, false)}</td>
+                    <td style="padding: 4px 6px; border: 1px solid #e2e8f0; text-align: right; font-weight: 700;">${formatFinance(r.valFin, false)}</td>
+                </tr>
+            `).join('');
+
+            // --- PDF INJECTION FOR MARKET BOOST ---
+            let boostRow = document.getElementById('pdf-boost-row');
+            const vvFinalElement = document.getElementById('pdf-vv-final');
+            
+            if(!boostRow && vvFinalElement) {
+                const finalRow = vvFinalElement.parentNode;
+                if(finalRow && finalRow.parentNode) {
+                    boostRow = document.createElement('tr');
+                    boostRow.id = 'pdf-boost-row';
+                    // Ajout du padding augmenté ici aussi
+                    boostRow.innerHTML = `
+                        <td style="padding: 6px; border-right: 1px solid #e2e8f0;">Majoration Marché</td>
+                        <td style="padding: 6px; border-right: 1px solid #e2e8f0;"><span id="pdf-boost-pct">0</span>%</td>
+                        <td style="padding: 6px; border-right: 1px solid #e2e8f0;">-</td>
+                        <td id="pdf-boost-val" style="padding: 6px; border-right: 1px solid #e2e8f0; font-weight: bold; color: #000;">+0,00 Dhs</td>
+                        <td style="padding: 6px;">-</td>
+                    `;
+                    finalRow.parentNode.insertBefore(boostRow, finalRow);
+                }
+            }
+            
+            if (boostRow) {
+                if (finalCalculation.marketPercent > 0) {
+                    safeSetText('pdf-boost-pct', finalCalculation.marketPercent);
+                    safeSetText('pdf-boost-val', "+" + formatFinance(finalCalculation.marketValueAdded));
+                    boostRow.style.display = 'table-row';
+                } else {
+                    boostRow.style.display = 'none';
+                }
+            }
+
+            // --- STRATÉGIE "LOADING" SANS OVERLAY GLITCH ---
+            const appWrapper = document.getElementById('app-wrapper');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            
+            // 1. Afficher l'écran de chargement propre (couvre tout)
+            loadingOverlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                // Safety check inside closure
+                if (!pdfTemplate) return;
+
+                appWrapper.style.display = 'none';
+                pdfTemplate.style.display = 'flex'; // Changed to flex to match template style
+                window.scrollTo(0, 0);
+
+                let filenameRef = refDossier ? refDossier.replace(/[\/\\ ]/g, '-') : 'AUTOGEN';
+                
+                const opt = {
+                    margin: 0, // IMPORTANT: Marge zéro pour éviter la page blanche
+                    filename: 'Expertise_BETCAM_' + filenameRef + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(pdfTemplate).save()
+                .then(() => {
+                    // 3. Restauration
+                    pdfTemplate.style.display = 'none';
+                    appWrapper.style.display = 'block';
+                    loadingOverlay.style.display = 'none'; // Retirer le loading
+                    window.scrollTo(0, 0);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    alert("Erreur PDF : " + err.message);
+                    pdfTemplate.style.display = 'none';
+                    appWrapper.style.display = 'block';
+                    loadingOverlay.style.display = 'none';
+                });
+            }, 100); // Court délai pour permettre au DOM de render le loadingOverlay
+        }
+
+        window.onload = updateVrade;
     </script>
 </body>
 </html>
