@@ -177,8 +177,8 @@
     <!-- Ajout de l'ID app-wrapper pour le masquage lors de l'export -->
     <div id="app-wrapper" class="max-w-7xl mx-auto space-y-6">
         
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-5 rounded-[2rem] shadow-sm border border-white/40">
+        <!-- Header Sticky (Figé & Opaque - Blanc Solide) -->
+        <header class="sticky top-2 md:top-4 z-50 flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-5 rounded-[2rem] shadow-xl border border-slate-200 transition-all">
             <div class="flex items-center gap-4 w-full md:w-auto">
                 <div class="logo-box flex-shrink-0">
                     <!-- LOGO SVG (Bouclier Expertise) -->
@@ -217,7 +217,7 @@
                     
                     <div class="space-y-4">
                         
-                        <!-- Reference Dossier & N Sinistre -->
+                        <!-- 1. IDENTIFICATION DOSSIER (Reference / Sinistre / Assuré) -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Référence Dossier</label>
@@ -229,20 +229,69 @@
                             </div>
                         </div>
 
-                        <!-- Nom Assuré -->
                         <div>
                             <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Nom de l'Assuré</label>
                             <input type="text" id="v_nom_assure" placeholder="Nom Prénom / Société" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
                         </div>
 
-                        <!-- Compagnie d'Assurance (NOUVEAU) -->
-                        <div>
-                            <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Compagnie d'Assurance</label>
-                            <input type="text" id="v_cie_assurance" placeholder="Ex: AXA / Wafa / RMA..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                        <!-- 2. COMPAGNIES (Datalist) -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie Assurance</label>
+                                <input type="text" id="v_cie_assurance" list="list_assurances" placeholder="Sélectionner ou saisir..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie Adverse</label>
+                                <input type="text" id="v_cie_adverse" list="list_assurances" placeholder="Sélectionner ou saisir..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
                         </div>
 
-                        <!-- Marque & Immatriculation -->
-                        <div class="grid grid-cols-2 gap-4">
+                        <!-- Datalist partagée pour les assurances -->
+                        <datalist id="list_assurances">
+                            <option value="ATLANTASANAD">
+                            <option value="AXA">
+                            <option value="CAT ASSURANCE">
+                            <option value="MAMDA">
+                            <option value="MATU">
+                            <option value="RMA">
+                            <option value="SANLAM">
+                            <option value="WAFA ASSURANCE">
+                        </datalist>
+
+                        <!-- 3. EXPERTS & ARBITRAGE (Datalist pour saisie libre) -->
+                        <div class="space-y-3 pt-2 border-t border-slate-100">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">1er Expert</label>
+                                    <input type="text" id="v_expert1" list="list_experts" placeholder="Sélectionner ou saisir..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">2ème Expert</label>
+                                    <input type="text" id="v_expert2" list="list_experts" placeholder="Sélectionner ou saisir..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Tiers Arbitre (Arbitrage)</label>
+                                <input type="text" id="v_arbitrage" list="list_experts" placeholder="Sélectionner ou saisir..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                            </div>
+                        </div>
+
+                        <!-- Datalist partagée pour les experts (Tri Alphabétique) -->
+                        <datalist id="list_experts">
+                            <option value="BAZ MUSTAPHA">
+                            <option value="BOUSMOU EL HOUSSAINE">
+                            <option value="CHRAIBI ADIL">
+                            <option value="EL AISSAOUI KHALID">
+                            <option value="EL KAISSI ABDELLAH">
+                            <option value="ERRAHMANI HASSAN">
+                            <option value="NACHAT DRISS">
+                            <option value="OUFKIR AHMED">
+                            <option value="SAADAANI">
+                            <option value="TOUIMEX">
+                        </datalist>
+
+                        <!-- 4. VÉHICULE -->
+                        <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-3">
                             <div>
                                 <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Marque / Modèle</label>
                                 <input type="text" id="v_marque_modele" placeholder="Ex: Renault Clio" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
@@ -259,16 +308,22 @@
                             <div class="grid grid-cols-2 gap-4 mb-3 mt-1">
                                 <div>
                                     <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date MEC</label>
-                                    <input type="date" id="v_dmec" value="2016-11-07" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
+                                    <input type="date" id="v_dmec" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date Sinistre</label>
-                                    <input type="date" id="v_sinistre" value="2026-02-01" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">DTE MISSION</label>
+                                    <input type="date" id="v_date_reception" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700">
                                 </div>
                             </div>
-                            <div class="border-t border-slate-200 pt-3">
-                                <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date de l'Expertise</label>
-                                <input type="date" id="v_date_expertise" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700">
+                            <div class="grid grid-cols-2 gap-4 border-t border-slate-200 pt-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date Sinistre</label>
+                                    <input type="date" id="v_sinistre" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700" onchange="updateVrade()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Date de l'Expertise</label>
+                                    <input type="date" id="v_date_expertise" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700">
+                                </div>
                             </div>
                         </div>
 
@@ -330,7 +385,8 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Puissance (CV)</label>
-                                <input type="number" id="v_pf" value="6" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none font-medium text-sm text-slate-700" oninput="updateVrade()">
+                                <!-- MODIFIÉ : Retrait de value="6" pour laisser le champ vide -->
+                                <input type="number" id="v_pf" placeholder="CV" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none font-medium text-sm text-slate-700" oninput="updateVrade()">
                             </div>
                             <div>
                                 <label class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Carburant</label>
@@ -701,27 +757,40 @@
                             <td id="pdf-num-sinistre" style="padding: 4px 6px; width: 25%; font-weight: 700;">--</td>
                         </tr>
                         <tr>
-                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Compagnie :</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Cie Assurance :</td>
                             <td id="pdf-cie-assurance" style="padding: 4px 6px; font-weight: 700;">--</td>
-                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Immatriculation :</td>
-                            <td id="pdf-mat" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Cie Adverse :</td>
+                            <td id="pdf-cie-adverse" style="padding: 4px 6px; font-weight: 700;">--</td>
+                        </tr>
+                        <!-- NOUVEAU : Ligne Experts -->
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">1er Expert :</td>
+                            <td id="pdf-expert1" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">2ème Expert :</td>
+                            <td id="pdf-expert2" style="padding: 4px 6px; font-weight: 700;">--</td>
+                        </tr>
+                        <!-- NOUVEAU : Ligne Arbitrage -->
+                        <tr>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Arbitrage :</td>
+                            <td id="pdf-arbitrage" colspan="3" style="padding: 4px 6px; font-weight: 700;">--</td>
                         </tr>
                         <tr>
                             <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Marque / Modèle :</td>
                             <td id="pdf-marque-modele" style="padding: 4px 6px; font-weight: 700; text-transform: uppercase;">--</td>
-                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Kilométrage :</td>
-                            <td id="pdf-km" style="padding: 4px 6px; font-weight: 700;">0 km</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Immatriculation :</td>
+                            <td id="pdf-mat" style="padding: 4px 6px; font-weight: 700;">--</td>
                         </tr>
                         <tr>
                             <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Énergie :</td>
                             <td id="pdf-energie" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Kilométrage :</td>
+                            <td id="pdf-km" style="padding: 4px 6px; font-weight: 700;">0 km</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Puissance Fiscale :</td>
                             <td id="pdf-puissance" style="padding: 4px 6px; font-weight: 700;">--</td>
-                        </tr>
-                        <!-- NEW ROW -->
-                        <tr>
                             <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Catégorie :</td>
-                            <td id="pdf-cat" colspan="3" style="padding: 4px 6px; font-weight: 700;">--</td>
+                            <td id="pdf-cat" style="padding: 4px 6px; font-weight: 700;">--</td>
                         </tr>
                     </table>
                 </div>
@@ -733,14 +802,18 @@
                         <tr>
                             <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Mise en circulation :</td>
                             <td id="pdf-dmec" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
-                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Date du Sinistre :</td>
-                            <td id="pdf-sinistre" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">DTE MISSION :</td>
+                            <td id="pdf-date-reception" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
                         </tr>
                         <tr>
-                            <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Date Expertise :</td>
-                            <td id="pdf-date-expertise" style="padding: 4px 6px; font-weight: 700;">--/--/----</td>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Date du Sinistre :</td>
+                            <td id="pdf-sinistre" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
+                            <td style="padding: 4px 6px; width: 25%; font-weight: 600; color: #64748b;">Date Expertise :</td>
+                            <td id="pdf-date-expertise" style="padding: 4px 6px; width: 25%; font-weight: 700;">--/--/----</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 4px 6px; font-weight: 600; color: #64748b;">Ancienneté :</td>
-                            <td id="pdf-anciennete" style="padding: 4px 6px; font-weight: 700;">0 ans, 0 jrs</td>
+                            <td id="pdf-anciennete" colspan="3" style="padding: 4px 6px; font-weight: 700;">0 ans, 0 jrs</td>
                         </tr>
                     </table>
                 </div>
@@ -867,7 +940,29 @@
 
         let chartEvo, chartDist;
         let tableDataForPDF = [];
-        let finalCalculation = {};
+        // INITIALIZATION WITH DEFAULT VALUES TO PREVENT PDF ERRORS IF DOWNLOADED BEFORE CALCULATION
+        let finalCalculation = {
+            valBase: 0,
+            adjKm: 0,
+            adjEntretien: 0,
+            marketPercent: 0,
+            marketValueAdded: 0,
+            valFinale: 0,
+            valTechnique: 0,
+            seuil: 0,
+            km: 0,
+            useCorrectives: false,
+            accordDevis: 0,
+            isTechReform: false,
+            techReasons: [],
+            techReasonDisplay: "Non spécifié",
+            isEcoReformManual: false,
+            ecoReasons: [],
+            ecoReasonDisplay: "Non spécifié",
+            isEcoReformMath: false,
+            applyToThreshold: false,
+            anciennete: "0 ans, 0 jrs"
+        };
 
         // Utility to safely set text content
         function safeSetText(id, text) {
@@ -877,6 +972,16 @@
             } else {
                 console.warn(`Element with id '${id}' not found for text update.`);
             }
+        }
+
+        // NEW UTILITY: Safely get value from input by ID
+        function getInputValue(id, fallback = '') {
+            const el = document.getElementById(id);
+            if (el) {
+                return el.value;
+            }
+            console.warn(`Input element with id '${id}' not found. Using fallback '${fallback}'.`);
+            return fallback;
         }
 
         function formatFinance(num, withSuffix = true) {
@@ -967,7 +1072,13 @@
         }
 
         window.updateVrade = function() {
-            let valNeuve = parseFloat(document.getElementById('v_valeur_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
+            // Using getElementById directly here is generally safe as these are core inputs, 
+            // but for consistency we could check, though updateVrade runs often.
+            // Keeping it simple unless it breaks.
+            const elValDisplay = document.getElementById('v_valeur_display');
+            if (!elValDisplay) return; // Basic safety for onload
+
+            let valNeuve = parseFloat(elValDisplay.value.replace(/\s/g, '').replace(',', '.')) || 0;
             let montantDevis = parseFloat(document.getElementById('v_devis_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
             let accordDevis = parseFloat(document.getElementById('v_accord_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
             
@@ -1299,11 +1410,9 @@
         }
 
         window.downloadExpertisePDF = function() {
-            const valNeuve = document.getElementById('v_valeur_raw').value;
-            if(parseFloat(valNeuve) <= 0) {
-                alert("Veuillez d'abord effectuer un calcul complet.");
-                return;
-            }
+            // NOTE: Validation check REMOVED to allow download even with empty fields
+            const valNeuve = getInputValue('v_valeur_raw', '0');
+            // if(parseFloat(valNeuve) <= 0) { ... } // Disabled
 
             if (typeof html2pdf === 'undefined') {
                 alert("La librairie PDF n'est pas chargée. Vérifiez votre connexion internet.");
@@ -1319,53 +1428,73 @@
             }
             
             // Re-fetch reference for filename logic specifically
-            const refInput = document.getElementById('v_ref');
-            const refDossier = refInput ? refInput.value.trim() : '';
+            const refDossier = getInputValue('v_ref').trim();
 
             // Update PDF Content
             safeSetText('pdf-ref-display', refDossier ? refDossier : "VRADE-AUTOGEN");
             
-            const mat = document.getElementById('v_mat').value || '--';
+            const mat = getInputValue('v_mat', '--');
             safeSetText('pdf-mat', mat);
 
             // New fields update
-            const nomAssure = document.getElementById('v_nom_assure').value || '--';
+            const nomAssure = getInputValue('v_nom_assure', '--');
             safeSetText('pdf-nom-assure', nomAssure);
             
             // === NOUVEAU CHAMP COMPAGNIE ===
-            const cieAssurance = document.getElementById('v_cie_assurance').value || '--';
+            const cieAssurance = getInputValue('v_cie_assurance', '--');
             safeSetText('pdf-cie-assurance', cieAssurance);
 
-            const numSinistre = document.getElementById('v_num_sinistre').value || '--';
+            const cieAdverse = getInputValue('v_cie_adverse', '--');
+            safeSetText('pdf-cie-adverse', cieAdverse);
+
+            // === NOUVEAU CHAMPS EXPERTS ===
+            const expert1 = getInputValue('v_expert1', '--');
+            safeSetText('pdf-expert1', expert1);
+
+            const expert2 = getInputValue('v_expert2', '--');
+            safeSetText('pdf-expert2', expert2);
+
+            const arbitrage = getInputValue('v_arbitrage', '--');
+            safeSetText('pdf-arbitrage', arbitrage);
+
+            const numSinistre = getInputValue('v_num_sinistre', '--');
             safeSetText('pdf-num-sinistre', numSinistre);
 
-            const marqueModele = document.getElementById('v_marque_modele').value || '--';
+            const marqueModele = getInputValue('v_marque_modele', '--');
             safeSetText('pdf-marque-modele', marqueModele);
 
             // --- MISE A JOUR JS POUR L'ENERGIE ET LA PUISSANCE ---
-            const energie = document.getElementById('v_carb').value || '--';
+            const energie = getInputValue('v_carb', '--');
             safeSetText('pdf-energie', energie);
 
-            const puissance = document.getElementById('v_pf').value || '--';
+            const puissance = getInputValue('v_pf', '--');
             safeSetText('pdf-puissance', puissance + " CV");
             
             // --- MISE A JOUR JS POUR LA CATEGORIE ---
             const catSelect = document.getElementById('v_cat');
-            const catText = catSelect.options[catSelect.selectedIndex].text;
-            safeSetText('pdf-cat', catText);
+            if (catSelect) {
+                const catText = catSelect.options[catSelect.selectedIndex].text;
+                safeSetText('pdf-cat', catText);
+            } else {
+                safeSetText('pdf-cat', '--');
+            }
             // ----------------------------------------------------
 
-            const dateExpertise = document.getElementById('v_date_expertise').value;
+            const dateExpertise = getInputValue('v_date_expertise');
             safeSetText('pdf-date-expertise', formatDateToFrench(dateExpertise));
 
+            // === NOUVEAU : DATE RECEPTION ===
+            const dateReception = getInputValue('v_date_reception');
+            safeSetText('pdf-date-reception', formatDateToFrench(dateReception));
+
             safeSetText('pdf-date-now', new Date().toLocaleDateString('fr-FR'));
-            safeSetText('pdf-val-neuve', formatFinance(parseFloat(document.getElementById('v_valeur_raw').value)));
-            safeSetText('pdf-dmec', formatDateToFrench(document.getElementById('v_dmec').value));
-            safeSetText('pdf-sinistre', formatDateToFrench(document.getElementById('v_sinistre').value));
-            safeSetText('pdf-devis', formatFinance(parseFloat(document.getElementById('v_devis_raw').value)));
+            safeSetText('pdf-val-neuve', formatFinance(parseFloat(getInputValue('v_valeur_raw', '0'))));
+            safeSetText('pdf-dmec', formatDateToFrench(getInputValue('v_dmec')));
+            safeSetText('pdf-sinistre', formatDateToFrench(getInputValue('v_sinistre')));
+            safeSetText('pdf-devis', formatFinance(parseFloat(getInputValue('v_devis_raw', '0'))));
             
             // PDF Accord Handling
-            const accordVal = parseFloat(document.getElementById('v_accord_raw').value) || 0;
+            const accordVal = parseFloat(getInputValue('v_accord_raw', '0')) || 0;
             const rowAccord = document.getElementById('pdf-row-accord');
             if(rowAccord) {
                 if(accordVal > 0) {
@@ -1380,7 +1509,7 @@
             safeSetText('pdf-val-base', formatFinance(finalCalculation.valBase));
             
             // Update Recap Table in PDF
-            safeSetText('pdf-recap-val-neuf', formatFinance(parseFloat(document.getElementById('v_valeur_raw').value)));
+            safeSetText('pdf-recap-val-neuf', formatFinance(parseFloat(getInputValue('v_valeur_raw', '0'))));
             safeSetText('pdf-recap-val-base', formatFinance(finalCalculation.valBase));
             const totalImpact = finalCalculation.adjKm + finalCalculation.adjEntretien;
             const impactSign = (totalImpact >= 0 && totalImpact > 0) ? "+" : "";
