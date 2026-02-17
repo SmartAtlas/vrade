@@ -12,6 +12,48 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // --- GUIDE MODAL FUNCTIONS (DEFINED EARLY) ---
+        window.openGuide = function () {
+            console.log("Attempting to open guide...");
+            const modal = document.getElementById('guide-modal');
+            const backdrop = document.getElementById('guide-backdrop');
+            const panel = document.getElementById('guide-panel');
+
+            if (!modal) {
+                alert("Erreur : Le modal du guide est introuvable dans la page.");
+                return;
+            }
+
+            modal.classList.remove('hidden');
+            // Force reflow
+            void modal.offsetWidth;
+
+            if (backdrop) backdrop.classList.remove('opacity-0');
+            if (panel) {
+                panel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+                panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }
+        };
+
+        window.closeGuide = function () {
+            const modal = document.getElementById('guide-modal');
+            const backdrop = document.getElementById('guide-backdrop');
+            const panel = document.getElementById('guide-panel');
+
+            if (backdrop) backdrop.classList.add('opacity-0');
+            if (panel) {
+                panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+                panel.classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+            }
+
+            setTimeout(() => {
+                if (modal) modal.classList.add('hidden');
+            }, 300);
+        };
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -410,6 +452,11 @@
                             Importer PDF
                         </button>
                     </div>
+                    <button type="button" id="btn-open-guide" onclick="console.log('Click HTML'); window.openGuide();"
+                        class="relative z-50 flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 font-extrabold text-[11px] rounded-xl border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all uppercase cursor-pointer">
+                        <i class="fa-solid fa-book-open text-indigo-500"></i>
+                        Guide Méthode
+                    </button>
                     <button onclick="saveState()"
                         class="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 font-extrabold text-[11px] rounded-xl border border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-all uppercase shadow-sm">
                         <i class="fa-solid fa-floppy-disk text-slate-500"></i>
@@ -2049,8 +2096,8 @@
                         // 2. Location / Utilitaire
                         { cat: "Location/Utilitaire", pMin: 0, pMax: 7, carb: "Diesel", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
                         { cat: "Location/Utilitaire", pMin: 0, pMax: 7, carb: "Essence", ans: [0.25, 0.20, 0.15, 0.10, 0.10] },
-                        { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Diesel", ans: [0.30, 0.25, 0.20, 0.15, 0.10] },
-                        { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Essence", ans: [0.30, 0.25, 0.20, 0.15, 0.10] },
+                        { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Diesel", ans: [0.30, 0.25, 0.15, 0.10, 0.10] },
+                        { cat: "Location/Utilitaire", pMin: 8, pMax: 11, carb: "Essence", ans: [0.30, 0.25, 0.15, 0.10, 0.10] },
                         { cat: "Location/Utilitaire", pMin: 12, pMax: 999, carb: "Diesel", ans: [0.32, 0.25, 0.20, 0.15, 0.10] },
                         { cat: "Location/Utilitaire", pMin: 12, pMax: 999, carb: "Essence", ans: [0.32, 0.25, 0.20, 0.15, 0.10] },
 
@@ -2333,8 +2380,8 @@
                                 }
                             }
 
-                            // Si toujours vide (dates manquantes), on utilise la ValNeuve par défaut
-                            // pour que le calcul affiche quelque chose de cohérent (VRADE = ValNeuve) au lieu de 0
+                            // If always empty (missing dates), use ValNeuve by default
+                            // so that the calculation displays something coherent (VRADE = ValNeuve) instead of 0
                             let valBase = valNeuve;
                             let ageAnnees = 0;
 
@@ -3672,7 +3719,7 @@
                                 icon.classList.remove('fa-chevron-down');
                                 icon.classList.add('fa-chevron-up');
                             } else {
-                                content.style.display = 'none';
+                                content.style.display = "none";
                                 icon.classList.remove('fa-chevron-up');
                                 icon.classList.add('fa-chevron-down');
                             }
@@ -3774,10 +3821,270 @@
                         }
                     }
 
+
+                    // Define Guide Functions Globally and Early
+
+
                     window.onload = function () {
-                        updateVrade();
-                        initAutoCollapse();
+                        try {
+                            updateVrade();
+                        } catch (e) {
+                            console.error("Error in updateVrade:", e);
+                        }
+
+                        try {
+                            initAutoCollapse();
+                        } catch (e) {
+                            console.error("Error in initAutoCollapse:", e);
+                        }
+
+                        // Attach Event Listener for Guide Button safely
+                        try {
+                            const guideBtn = document.getElementById('btn-open-guide');
+                            if (guideBtn) {
+                                guideBtn.addEventListener('click', function (e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    console.log("Guide button clicked via listener");
+                                    window.openGuide();
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Error attaching guide button listener:", e);
+                        }
                     };
+                </script>
+                <!-- GUIDE MÉTHODOLOGIQUE MODAL (PREMIUM DESIGN) -->
+                <div id="guide-modal" class="fixed inset-0 z-[100000] hidden no-print" aria-labelledby="modal-title"
+                    role="dialog" aria-modal="true" data-html2canvas-ignore="true">
+                    <!-- Backdrop Glassmorphism -->
+                    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity opacity-0"
+                        id="guide-backdrop"></div>
+
+                    <div class="fixed inset-0 z-10 overflow-y-auto">
+                        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <!-- Modal Panel -->
+                            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-4xl opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                id="guide-panel">
+
+                                <!-- Header Modal -->
+                                <div
+                                    class="bg-gradient-to-r from-slate-900 to-blue-900 px-6 py-4 flex justify-between items-center">
+                                    <h3 class="text-lg font-black leading-6 text-white uppercase tracking-widest"
+                                        id="modal-title">
+                                        <i class="fa-solid fa-scale-balanced mr-2 text-blue-400"></i> Guide
+                                        Méthodologique VRADE
+                                    </h3>
+                                    <button type="button" onclick="window.closeGuide()"
+                                        class="rounded-full p-1 text-slate-400 hover:text-white hover:bg-white/10 transition-colors focus:outline-none">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Content -->
+                                <div class="px-6 py-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+
+                                    <!-- Intro -->
+                                    <div class="mb-8 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg">
+                                        <p class="text-sm text-blue-900 font-medium">
+                                            Ce guide détaille les formules mathématiques et les critères techniques
+                                            utilisés par le <strong>Cabinet BETCAM</strong> pour déterminer la Valeur de
+                                            Remplacement à Dire d'Expert (VRADE).
+                                        </p>
+                                    </div>
+
+                                    <div class="space-y-10">
+
+                                        <!-- 1. DÉPRÉCIATION -->
+                                        <section>
+                                            <h4
+                                                class="flex items-center text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                                                <span
+                                                    class="bg-slate-100 text-slate-600 px-2 py-1 rounded mr-2">01</span>
+                                                Dépréciation Temporelle
+                                            </h4>
+                                            <div class="grid md:grid-cols-2 gap-6">
+                                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                    <h5 class="font-bold text-slate-700 text-xs uppercase mb-2">Méthode
+                                                        Linéaire</h5>
+                                                    <p class="text-xs text-slate-500 mb-3 text-justify">Appliquée pour
+                                                        les véhicules utilitaires ou à usage intensif.</p>
+                                                    <div
+                                                        class="bg-white p-3 rounded border border-slate-200 font-mono text-xs text-slate-600">
+                                                        Val. = Val. Neuve × (1 - (Taux × Années))
+                                                    </div>
+                                                </div>
+                                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                                    <h5 class="font-bold text-slate-700 text-xs uppercase mb-2">Méthode
+                                                        Courbe (Dégressive)</h5>
+                                                    <p class="text-xs text-slate-500 mb-3 text-justify">Standard pour
+                                                        les véhicules de tourisme. La perte est plus forte les premières
+                                                        années.</p>
+                                                    <div class="space-y-1 text-xs text-slate-500">
+                                                        <div class="flex justify-between"><span>Année 1:</span> <span
+                                                                class="font-bold text-slate-700">-25% à -30%</span>
+                                                        </div>
+                                                        <div class="flex justify-between"><span>Année 2:</span> <span
+                                                                class="font-bold text-slate-700">-15% à -20%</span>
+                                                        </div>
+                                                        <div class="flex justify-between"><span>Année 3+:</span> <span
+                                                                class="font-bold text-slate-700">-10% à -12% / an</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- 2. CORRECTIFS -->
+                                        <section>
+                                            <h4
+                                                class="flex items-center text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                                                <span
+                                                    class="bg-slate-100 text-slate-600 px-2 py-1 rounded mr-2">02</span>
+                                                Correctifs (Bonus / Malus)
+                                            </h4>
+
+                                            <!-- Correctif KM -->
+                                            <div class="mb-6">
+                                                <h5 class="text-xs font-bold text-indigo-700 uppercase mb-2">A.
+                                                    Correctif Kilométrique</h5>
+                                                <div
+                                                    class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex flex-col md:flex-row gap-4 items-center">
+                                                    <div class="flex-1">
+                                                        <p class="text-xs text-slate-600 mb-2">Comparaison entre le
+                                                            kilométrage réel et le standard théorique (Moyenne 20-25k
+                                                            km/an pour Diesel).</p>
+                                                        <ul class="text-[11px] text-slate-500 list-disc list-inside">
+                                                            <li><strong>KM Réel < Standard</strong> : Plus-value (Bonus)
+                                                            </li>
+                                                            <li><strong>KM Réel > Standard</strong> : Moins-value
+                                                                (Malus)</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div
+                                                        class="bg-white px-4 py-3 rounded-lg shadow-sm border border-indigo-100">
+                                                        <code
+                                                            class="text-xs text-indigo-600 font-bold block mb-1">Impact = (Différence KM) × Taux</code>
+                                                        <span class="text-[10px] text-slate-400 block text-right">Taux
+                                                            usuel : 0.2% à 0.5% par 1000km</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Correctif Entretien -->
+                                            <div>
+                                                <h5 class="text-xs font-bold text-rose-700 uppercase mb-2">B. Correctif
+                                                    Entretien</h5>
+                                                <div class="bg-rose-50/50 p-4 rounded-xl border border-rose-100">
+                                                    <div class="grid grid-cols-3 gap-2 text-center">
+                                                        <div class="bg-white p-2 rounded border border-rose-100">
+                                                            <div class="text-[10px] font-bold text-rose-800">MAUVAIS
+                                                            </div>
+                                                            <div class="text-xs font-black text-rose-600">-15%</div>
+                                                        </div>
+                                                        <div class="bg-white p-2 rounded border border-rose-100">
+                                                            <div class="text-[10px] font-bold text-orange-800">MOYEN
+                                                            </div>
+                                                            <div class="text-xs font-black text-orange-600">-5% à -10%
+                                                            </div>
+                                                        </div>
+                                                        <div class="bg-white p-2 rounded border border-rose-100">
+                                                            <div class="text-[10px] font-bold text-green-800">BON /
+                                                                SUIVI</div>
+                                                            <div class="text-xs font-black text-green-600">0% (Neutre)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <!-- 3. AJUSTEMENT EXPERT -->
+                                        <section>
+                                            <h4
+                                                class="flex items-center text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                                                <span
+                                                    class="bg-slate-100 text-slate-600 px-2 py-1 rounded mr-2">03</span>
+                                                Ajustement Expert
+                                            </h4>
+                                            <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5">
+                                                <p class="text-xs text-slate-700 leading-relaxed mb-3">
+                                                    Facteur discrétionnaire appliqué par l'expert pour refléter les
+                                                    réalités spécifiques du marché local (offre/demande) ou l'état
+                                                    exceptionnel du véhicule non capturé par les correctifs standards.
+                                                </p>
+                                                <div class="flex items-center gap-3">
+                                                    <span
+                                                        class="px-2 py-1 bg-white border border-emerald-200 rounded text-[10px] font-bold text-emerald-700">MARCHÉ</span>
+                                                    <span class="text-slate-400 text-xs">+</span>
+                                                    <span
+                                                        class="px-2 py-1 bg-white border border-emerald-200 rounded text-[10px] font-bold text-emerald-700">ÉTAT
+                                                        CARROSSERIE</span>
+                                                    <span class="text-slate-400 text-xs">=</span>
+                                                    <span class="font-bold text-emerald-800 text-xs">VALORISATION
+                                                        SUPPLÉMENTAIRE</span>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                    </div>
+
+                                    <!-- Footer Formule Globale -->
+                                    <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                                        <h5 class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">
+                                            Formule de Synthèse VRADE</h5>
+                                        <div
+                                            class="inline-block bg-slate-900 text-white px-6 py-3 rounded-full shadow-lg shadow-slate-200">
+                                            <span class="font-mono text-sm font-bold">VRADE = (Base × Dépréciation) ±
+                                                Correctifs + Ajustement Expert</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Footer Actions -->
+                                <div class="bg-slate-50 px-6 py-4 flex justify-end">
+                                    <button type="button" onclick="window.closeGuide()"
+                                        class="inline-flex justify-center rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 uppercase tracking-wide transition-all">
+                                        Fermer le guide
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    .custom-scrollbar::-webkit-scrollbar {
+                        width: 6px;
+                    }
+
+                    .custom-scrollbar::-webkit-scrollbar-track {
+                        background: #f1f5f9;
+                    }
+
+                    .custom-scrollbar::-webkit-scrollbar-thumb {
+                        background-color: #cbd5e1;
+                        border-radius: 20px;
+                    }
+                </style>
+
+                <script>
+                    // Secondary listener for backdrop close, just in case
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const guideModal = document.getElementById('guide-modal');
+                        if (guideModal) {
+                            guideModal.addEventListener('click', function (e) {
+                                if (e.target === document.getElementById('guide-backdrop') || e.target.closest('#guide-backdrop')) {
+                                    window.closeGuide();
+                                }
+                            });
+                        }
+                    });
                 </script>
 </body>
 
