@@ -17,24 +17,50 @@
 
         // --- GUIDE MODAL FUNCTIONS (DEFINED EARLY) ---
         window.openGuide = function () {
-            console.log("Attempting to open guide...");
-            const modal = document.getElementById('guide-modal');
-            const backdrop = document.getElementById('guide-backdrop');
-            const panel = document.getElementById('guide-panel');
+            try {
+                let modal = document.getElementById('guide-modal');
+                const backdrop = document.getElementById('guide-backdrop');
+                const panel = document.getElementById('guide-panel');
 
-            if (!modal) {
-                alert("Erreur : Le modal du guide est introuvable dans la page.");
-                return;
-            }
+                if (!modal) {
+                    console.error("ERREUR CRITIQUE: Modal #guide-modal introuvable.");
+                    return;
+                }
 
-            modal.classList.remove('hidden');
-            // Force reflow
-            void modal.offsetWidth;
+                // MOVE TO BODY to escape any stacking context
+                if (modal.parentNode !== document.body) {
+                    document.body.appendChild(modal);
+                }
 
-            if (backdrop) backdrop.classList.remove('opacity-0');
-            if (panel) {
-                panel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
-                panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+                // FORCE VISIBILITY
+                modal.classList.remove('hidden');
+                modal.style.display = 'block';
+                modal.style.visibility = 'visible';
+                modal.style.zIndex = '2147483647'; // True Max Z-Index
+                modal.style.opacity = '1';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+
+                // Backdrop
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.style.opacity = '1';
+                    backdrop.style.display = 'block';
+                }
+
+                // Panel
+                if (panel) {
+                    panel.classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+                    panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+                    panel.style.transform = 'translateY(0) scale(1)';
+                    panel.style.opacity = '1';
+                    panel.style.display = 'block';
+                }
+            } catch (e) {
+                console.error("JS ERROR in openGuide: " + e.message);
             }
         };
 
@@ -50,7 +76,10 @@
             }
 
             setTimeout(() => {
-                if (modal) modal.classList.add('hidden');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                }
             }, 300);
         };
     </script>
@@ -452,8 +481,8 @@
                             Importer PDF
                         </button>
                     </div>
-                    <button type="button" id="btn-open-guide" onclick="console.log('Click HTML'); window.openGuide();"
-                        class="relative z-50 flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 font-extrabold text-[11px] rounded-xl border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all uppercase cursor-pointer">
+                    <button type="button" id="btn-open-guide" onclick="window.openGuide();"
+                        class="relative z-[200] flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 font-extrabold text-[11px] rounded-xl border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all uppercase cursor-pointer shadow-sm">
                         <i class="fa-solid fa-book-open text-indigo-500"></i>
                         Guide Méthode
                     </button>
@@ -1843,16 +1872,21 @@
                         <table class="pdf-table-compact"
                             style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; color: #000;">
                             <thead>
-                                <tr style="background: #f1f5f9; color: #000;">
-                                    <th style="padding: 4px 6px; font-weight: 700;">
+                                <tr style="background: #e2e8f0; color: #1e293b; border-bottom: 2px solid #cbd5e1;">
+                                    <th
+                                        style="padding: 4px 8px; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Année</th>
-                                    <th style="padding: 4px 6px; font-weight: 700;">
+                                    <th
+                                        style="padding: 4px 8px; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Période</th>
-                                    <th style="padding: 4px 6px; text-align: center; font-weight: 700;">
+                                    <th
+                                        style="padding: 4px 8px; text-align: center; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Taux</th>
-                                    <th style="padding: 4px 6px; text-align: right; font-weight: 700;">
+                                    <th
+                                        style="padding: 4px 8px; text-align: right; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Dépréciation</th>
-                                    <th style="padding: 4px 6px; text-align: right; font-weight: 700;">
+                                    <th
+                                        style="padding: 4px 8px; text-align: right; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Valeur Fin</th>
                                 </tr>
                             </thead>
@@ -2740,15 +2774,22 @@
                                 }
                             }
 
-                            document.getElementById('pdf-table-body').innerHTML = tableDataForPDF.map(r => `
-                <tr>
-                    <td style="padding: 2px 6px; border: 1px solid #000; border-left: none; color: #000;">Année ${r.annee}</td>
-                    <td style="padding: 2px 6px; border: 1px solid #000; color: #000;">${r.start.toLocaleDateString()} au ${r.end.toLocaleDateString()}</td>
-                    <td style="padding: 2px 6px; border: 1px solid #000; text-align: center; color: #000;">${(r.t * 100).toFixed(0)}%</td>
-                    <td style="padding: 2px 6px; border: 1px solid #000; text-align: right; color: #000;">-${formatFinance(r.perte, false)}</td>
-                    <td style="padding: 2px 6px; border: 1px solid #000; text-align: right; font-weight: 700; color: #000;">${formatFinance(r.valFin, false)}</td>
+                            document.getElementById('pdf-table-body').innerHTML = tableDataForPDF.map((r, i) => {
+                                const isBold = (i % 2 === 0);
+                                const bgStyle = isBold ? "background-color: #f1f5f9;" : "background-color: #ffffff;";
+                                const textStyle = isBold ? "font-weight: 700; color: #1e293b;" : "font-weight: 400; color: #475569;";
+                                const borderStyle = "border-bottom: 1px solid #e2e8f0;"; // Only horizontal
+
+                                return `
+                <tr style="${bgStyle}">
+                    <td style="padding: 4px 8px; ${borderStyle} ${textStyle}">Année ${r.annee}</td>
+                    <td style="padding: 4px 8px; ${borderStyle} ${textStyle}">${r.start.toLocaleDateString()} au ${r.end.toLocaleDateString()}</td>
+                    <td style="padding: 4px 8px; ${borderStyle} ${textStyle} text-align: center;">${(r.t * 100).toFixed(0)}%</td>
+                    <td style="padding: 4px 8px; ${borderStyle} ${textStyle} text-align: right;">-${formatFinance(r.perte, false)}</td>
+                    <td style="padding: 4px 8px; ${borderStyle} ${textStyle} text-align: right;">${formatFinance(r.valFin, false)}</td>
                 </tr>
-            `).join('');
+            `;
+                            }).join('');
 
                             // --- MISE À JOUR DU RÉCAPITULATIF EXPERT (TABLEAU 7) ---
                             safeSetText('pdf-recap-expert-base', formatFinance(valBase));
@@ -3964,6 +4005,59 @@
                                                             <li><strong>KM Réel > Standard</strong> : Moins-value
                                                                 (Malus)</li>
                                                         </ul>
+
+                                                        <!-- TABLEAU RÉFÉRENCE KM -->
+                                                        <div
+                                                            class="mt-3 overflow-hidden rounded-lg border border-indigo-100">
+                                                            <table class="w-full text-xs text-left">
+                                                                <thead
+                                                                    class="bg-indigo-50/50 text-indigo-800 font-bold uppercase text-[10px]">
+                                                                    <tr>
+                                                                        <th class="px-3 py-1.5">Usage / Type</th>
+                                                                        <th class="px-3 py-1.5 text-right">Réf. Annuelle
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody
+                                                                    class="divide-y divide-indigo-50 text-slate-600 bg-white">
+                                                                    <tr>
+                                                                        <td class="px-3 py-1.5 font-medium">Motocycles
+                                                                        </td>
+                                                                        <td
+                                                                            class="px-3 py-1.5 text-right font-bold text-slate-800">
+                                                                            5 000 km</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="px-3 py-1.5 font-medium">Engins &
+                                                                            Agricole</td>
+                                                                        <td
+                                                                            class="px-3 py-1.5 text-right font-bold text-slate-800">
+                                                                            1 500 km</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="px-3 py-1.5 font-medium">Essence
+                                                                            (Tourisme/Util.)</td>
+                                                                        <td
+                                                                            class="px-3 py-1.5 text-right font-bold text-slate-800">
+                                                                            20 000 km</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="px-3 py-1.5 font-medium">Diesel
+                                                                            (Tourisme/Util.)</td>
+                                                                        <td
+                                                                            class="px-3 py-1.5 text-right font-bold text-slate-800">
+                                                                            25 000 km</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="px-3 py-1.5 font-medium">Poids Lourds
+                                                                            / Bus</td>
+                                                                        <td
+                                                                            class="px-3 py-1.5 text-right font-bold text-slate-800">
+                                                                            50 000 km</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                     <div
                                                         class="bg-white px-4 py-3 rounded-lg shadow-sm border border-indigo-100">
