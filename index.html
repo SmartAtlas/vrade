@@ -3489,6 +3489,7 @@
                                             return pdf;
                                         }).then(pdf => {
                                             if (mode === 'preview') {
+                                                pdf.setProperties({ title: filenameRef + '.pdf' });
                                                 const blobUrl = pdf.output('bloburl');
                                                 window.open(blobUrl, '_blank');
                                                 return;
