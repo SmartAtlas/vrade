@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BETCAM | Expertise VRADE & Décision</title>
+    <title>BETCAM | Expertise VVADE & Décision</title>
 
     <!-- Bibliothèques Externes -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -257,24 +257,37 @@
             overflow: hidden;
         }
 
-        /* Police agrandie pour meilleure lisibilité & NOIR pur */
+        /* Police agrandie pour meilleure lisibilité & Couleurs Premium */
         .pdf-table-compact td {
             padding: 5px 6px !important;
-            font-size: 12px;
+            font-size: 11.5px;
             vertical-align: middle;
-            color: #000 !important;
+            color: #334155;
+            /* Slate 700 for better digital reading than pure black */
+        }
+
+        .pdf-table-compact th {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #475569;
+            background-color: #f8fafc;
         }
 
         .pdf-section-title {
-            font-size: 14px;
-            font-weight: 800;
+            font-size: 14.5px;
+            font-weight: 900;
             text-transform: uppercase;
-            color: #1e3a8a;
+            letter-spacing: 0.1em;
+            color: #991b1b;
+            /* Dark Red */
             margin: 0 0 6px 0;
-            padding: 2px 0 2px 8px;
-            border-left: 5px solid #1e3a8a;
-            background-color: #f8fafc;
+            padding: 4px 0 4px 10px;
+            border-left: 4px solid #991b1b;
+            background: linear-gradient(to right, #fff1f2, #ffffff);
             page-break-after: avoid;
+            display: flex;
+            align-items: center;
         }
 
         /* Overlay de chargement Premium (Glassmorphism) */
@@ -476,30 +489,35 @@
                         <input type="file" id="pdf-import-input" accept=".pdf" class="hidden"
                             onchange="handlePDFImport(this)">
                         <button onclick="document.getElementById('pdf-import-input').click()"
-                            class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 font-extrabold text-[11px] rounded-xl border border-blue-200 hover:bg-blue-100 transition-all uppercase animate-import">
-                            <i class="fa-solid fa-file-import text-blue-500"></i>
-                            Importer PDF
+                            class="h-10 px-4 bg-sky-50 text-sky-700 font-black text-[10px] rounded-xl border border-sky-200 hover:bg-sky-100 transition-all uppercase tracking-widest flex items-center gap-2 shadow-sm active:scale-95 animate-import">
+                            <i class="fa-solid fa-file-import"></i>
+                            Importer
                         </button>
                     </div>
                     <button type="button" id="btn-open-guide" onclick="window.openGuide();"
-                        class="relative z-[200] flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 font-extrabold text-[11px] rounded-xl border border-indigo-200 hover:bg-indigo-100 hover:shadow-md transition-all uppercase cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-book-open text-indigo-500"></i>
-                        Guide Méthode
+                        class="h-10 px-4 bg-indigo-50 text-indigo-700 font-black text-[10px] rounded-xl border border-indigo-200 hover:bg-indigo-100 transition-all uppercase tracking-widest flex items-center gap-2 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-book-open"></i>
+                        Guide
                     </button>
                     <button onclick="saveState()"
-                        class="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 font-extrabold text-[11px] rounded-xl border border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-all uppercase shadow-sm">
-                        <i class="fa-solid fa-floppy-disk text-slate-500"></i>
+                        class="h-10 px-4 bg-slate-50 text-slate-700 font-black text-[10px] rounded-xl border border-slate-200 hover:bg-slate-100 transition-all uppercase tracking-widest flex items-center gap-2 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-floppy-disk"></i>
                         Sauver
                     </button>
                     <button onclick="resetApp()"
-                        class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 font-extrabold text-[11px] rounded-xl border border-red-200 hover:bg-red-100 transition-all uppercase">
-                        <i class="fa-solid fa-plus-circle text-red-400"></i>
-                        Nouveau Rapport
+                        class="h-10 px-4 bg-red-50 text-red-700 font-black text-[10px] rounded-xl border border-red-200 hover:bg-red-100 transition-all uppercase tracking-widest flex items-center gap-2 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-rotate"></i>
+                        Nouveau
                     </button>
-                    <button onclick="downloadExpertisePDF()"
-                        class="h-9 px-4 bg-blue-900 text-white rounded-lg text-xs font-bold hover:bg-blue-800 transition-all flex items-center gap-2 shadow-md shadow-blue-900/20 uppercase tracking-wide group">
-                        <span>Éditer Rapport</span> <i
-                            class="fa-solid fa-file-export group-hover:translate-x-1 transition-transform"></i>
+                    <button onclick="downloadExpertisePDF('preview')"
+                        class="h-10 px-4 bg-slate-700 text-white font-black text-[10px] rounded-xl hover:bg-slate-800 transition-all uppercase tracking-widest flex items-center gap-2 shadow-md shadow-slate-200 active:scale-95">
+                        <i class="fa-solid fa-eye"></i>
+                        Aperçu
+                    </button>
+                    <button onclick="downloadExpertisePDF('download')"
+                        class="h-10 px-6 bg-[#1e3a8a] text-white font-black text-[10px] rounded-xl hover:bg-blue-800 transition-all uppercase tracking-widest flex items-center gap-2 shadow-md shadow-blue-200 active:scale-95">
+                        <i class="fa-solid fa-file-export"></i>
+                        Éditer
                     </button>
                 </div>
             </header>
@@ -512,91 +530,123 @@
             <div class="lg:col-span-4 space-y-5 no-print">
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 space-y-5">
                     <h2
-                        class="text-sm font-bold text-blue-900 uppercase tracking-[0.2em] mb-2 text-center border-b border-blue-50 pb-3">
+                        class="text-xs font-black text-[#991b1b] uppercase tracking-[0.2em] mb-2 text-center border-b border-red-50 pb-3">
                         Données du Dossier</h2>
 
-                    <!-- Global Expand/Collapse Button (Toggle) -->
-                    <div class="flex justify-center pb-3 mb-2 border-b border-blue-50">
+                    <div class="flex justify-center pb-3 mb-2 border-b border-red-50">
                         <button id="global-toggle-btn" onclick="toggleAllSections()"
-                            class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-lg shadow-md shadow-purple-200 hover:bg-purple-700 hover:shadow-lg transition-all transform active:scale-95">
-                            <i class="fa-solid fa-layer-group"></i> <span>Tout Ouvrir / Fermer</span>
+                            class="h-9 px-6 bg-slate-100 text-slate-700 font-black text-[10px] uppercase tracking-widest rounded-xl shadow-sm border border-slate-200 hover:bg-slate-200 transition-all transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group"></i> <span>Expand / Collapse</span>
                         </button>
                     </div>
 
                     <div class="space-y-4">
 
-                        <!-- 1. IDENTIFICATION DOSSIER (Reference / Type / Sinistre / Assuré) -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
+                        <!-- 0. IDENTIFICATION DOSSIER -->
+                        <div
+                            class="bg-indigo-50/30 p-4 rounded-2xl border border-indigo-100 transition-all duration-300">
+                            <div class="flex justify-between items-center cursor-pointer mb-3"
+                                onclick="toggleSection('ident-content', 'icon-ident')">
                                 <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Référence
-                                    Dossier</label>
-                                <input type="text" id="v_ref" placeholder="Ex: 26/001/A"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Identification
+                                    du Dossier</label>
+                                <i id="icon-ident" class="fa-solid fa-chevron-up text-indigo-700"></i>
                             </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Type
-                                    de Dossier</label>
-                                <select id="v_type_dossier"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900">
-                                    <option value="NORMAL" selected>Normal</option>
-                                    <option value="CONTRADICTOIRE">Contradictoire</option>
-                                    <option value="COLLEGIALE">Collégiale</option>
-                                </select>
-                            </div>
-                        </div>
+                            <div id="ident-content" class="space-y-4 transition-all duration-300 origin-top">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Référence
+                                            Dossier</label>
+                                        <input type="text" id="v_ref" placeholder="Ex: 26/001/A"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Type
+                                            de Dossier</label>
+                                        <select id="v_type_dossier"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900">
+                                            <option value="NORMAL" selected>Normal</option>
+                                            <option value="CONTRADICTOIRE">Contradictoire</option>
+                                            <option value="COLLEGIALE">Collégiale</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">N°
-                                    Sinistre</label>
-                                <input type="text" id="v_num_sinistre" placeholder="Ex: 100/2026"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Nom
-                                    de l'Assuré</label>
-                                <input type="text" id="v_nom_assure" placeholder="Nom Prénom / Société"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">N°
+                                            Sinistre</label>
+                                        <input type="text" id="v_num_sinistre" placeholder="Ex: 100/2026"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Nom
+                                            de l'Assuré</label>
+                                        <input type="text" id="v_nom_assure" placeholder="Nom Prénom / Société"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                </div>
 
-                        <!-- 2. COMPAGNIES (Datalist) -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie
-                                    Assurance</label>
-                                <input type="text" id="v_cie_assurance" list="list_assurances"
-                                    placeholder="Sélectionner ou saisir..."
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie
-                                    Adverse</label>
-                                <input type="text" id="v_cie_adverse" list="list_assurances"
-                                    placeholder="Sélectionner ou saisir..."
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                        </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie
+                                            Assurance</label>
+                                        <input type="text" id="v_cie_assurance" list="list_assurances"
+                                            placeholder="Sélectionner..."
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Cie
+                                            Adverse</label>
+                                        <input type="text" id="v_cie_adverse" list="list_assurances"
+                                            placeholder="Sélectionner..."
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Requérant</label>
-                                <input type="text" id="v_requerant" placeholder="Ex: Compagnie / Agent"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Garage
-                                    Réparateur</label>
-                                <input type="text" id="v_garage" placeholder="Nom et Ville du Garage"
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Requérant</label>
+                                        <input type="text" id="v_requerant" placeholder="Ex: Compagnie"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Garage</label>
+                                        <input type="text" id="v_garage" placeholder="Nom et Ville"
+                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
+                                    </div>
+                                </div>
+
+                                <div class="space-y-3 pt-2 border-t border-slate-100">
+                                    <div class="grid grid-cols-1 gap-3">
+                                        <div>
+                                            <label
+                                                class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Experts
+                                                (1er / 2ème)</label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <input type="text" id="v_expert1" list="list_experts"
+                                                    placeholder="1er Expert"
+                                                    class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900">
+                                                <input type="text" id="v_expert2" list="list_experts"
+                                                    placeholder="2ème Expert"
+                                                    class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <input type="text" id="v_arbitrage" list="list_experts"
+                                                placeholder="Tiers Arbitre (Optionnel)"
+                                                class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -606,7 +656,7 @@
                             <div class="flex justify-between items-center cursor-pointer mb-3"
                                 onclick="toggleSection('garanties-content', 'icon-garanties')">
                                 <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer">Garanties
+                                    class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Garanties
                                     de Couverture</label>
                                 <i id="icon-garanties" class="fa-solid fa-chevron-up text-blue-600"></i>
                             </div>
@@ -667,35 +717,7 @@
                             <option value="WAFA ASSURANCE">
                         </datalist>
 
-                        <!-- 3. EXPERTS & ARBITRAGE (Datalist pour saisie libre) -->
-                        <div class="space-y-3 pt-2 border-t border-slate-100">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label
-                                        class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">1er
-                                        Expert</label>
-                                    <input type="text" id="v_expert1" list="list_experts"
-                                        placeholder="Sélectionner ou saisir..."
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">2ème
-                                        Expert</label>
-                                    <input type="text" id="v_expert2" list="list_experts"
-                                        placeholder="Sélectionner ou saisir..."
-                                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                                </div>
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Tiers
-                                    Arbitre (Arbitrage)</label>
-                                <input type="text" id="v_arbitrage" list="list_experts"
-                                    placeholder="Sélectionner ou saisir..."
-                                    class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
-                            </div>
-                        </div>
+
 
                         <!-- Datalist partagée pour les experts (Tri Alphabétique) -->
                         <datalist id="list_experts">
@@ -717,7 +739,7 @@
                             <div class="flex justify-between items-center cursor-pointer mb-3"
                                 onclick="toggleSection('vehicule-content', 'icon-vehicule')">
                                 <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer">Véhicule
+                                    class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Véhicule
                                     (Carte Grise)</label>
                                 <i id="icon-vehicule" class="fa-solid fa-chevron-up text-blue-600"></i>
                             </div>
@@ -733,7 +755,7 @@
                                             class="w-full p-3 pr-24 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 placeholder-slate-400">
                                         <div class="absolute right-2 top-1.5 flex gap-1">
                                             <button type="button" onclick="openCarPicker()"
-                                                class="px-2 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-lg hover:bg-blue-100 transition-colors uppercase">
+                                                class="h-8 px-3 bg-blue-900 text-white text-[9px] font-black rounded-lg hover:bg-blue-800 transition-all uppercase tracking-widest shadow-sm active:scale-95">
                                                 LISTE
                                             </button>
                                         </div>
@@ -763,19 +785,44 @@
                                             MEC</label>
                                         <input type="date" id="v_dmec"
                                             class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700"
-                                            onchange="updateVrade()">
+                                            onchange="updateVvade()">
                                     </div>
                                     <div>
                                         <label
-                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Genre</label>
-                                        <select id="v_genre"
-                                            class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-900 appearance-none cursor-pointer">
-                                            <option value="--">--</option>
-                                            <option value="C.I">C.I</option>
-                                            <option value="C1">C1</option>
-                                            <option value="C2">C2</option>
-                                            <option value="E">E</option>
-                                        </select>
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">GENRE</label>
+                                        <input type="text" id="v_genre" list="genre_list" placeholder="Ex: FVS"
+                                            class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-semibold text-slate-800"
+                                            oninput="updateVvade()">
+                                        <datalist id="genre_list">
+                                            <option value="VP (Voiture Particulière)">
+                                            <option value="VUL (Utilitaire Léger)">
+                                            <option value="FVS">
+                                            <option value="DERIV VP">
+                                            <option value="FOURGON">
+                                            <option value="FOURGONNETTE">
+                                            <option value="CAMIONNETTE">
+                                            <option value="PICK-UP">
+                                            <option value="CHASSIS CABINE">
+                                            <option value="CAMION">
+                                            <option value="BENNE">
+                                            <option value="CITERNE">
+                                            <option value="PLATEAU">
+                                            <option value="DEPANNAGE">
+                                            <option value="AMBULANCE">
+                                            <option value="MINI-BUS">
+                                            <option value="AUTOCAR / AUTOBUS">
+                                            <option value="TRACTEUR ROUTIER">
+                                            <option value="TRACTEUR AGRICOLE">
+                                            <option value="SEMI-REMORQUE">
+                                            <option value="REMORQUE">
+                                            <option value="CYCLOMOTEUR">
+                                            <option value="MOTO / QUAD">
+                                            <option value="TRICROSS">
+                                            <option value="VASP">
+                                            <option value="C.I">
+                                            <option value="C1">
+                                            <option value="C2">
+                                        </datalist>
                                     </div>
                                 </div>
 
@@ -784,7 +831,7 @@
                                         class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Catégorie</label>
                                     <select id="v_cat"
                                         class="w-full p-3 bg-yellow-50 border-2 border-yellow-200 rounded-xl input-focus outline-none text-sm font-bold appearance-none cursor-pointer text-blue-950 shadow-sm"
-                                        onchange="updateVrade()">
+                                        onchange="updateVvade()">
                                         <optgroup label="Véhicules Légers">
                                             <option value="PP/Non Utilitaire" selected>VH Particulier / Non Utilitaire
                                             </option>
@@ -808,14 +855,14 @@
                                             (CV)</label>
                                         <input type="number" id="v_pf" placeholder="CV"
                                             class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none font-medium text-sm text-slate-700"
-                                            oninput="updateVrade()">
+                                            oninput="updateVvade()">
                                     </div>
                                     <div>
                                         <label
-                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Carburant</label>
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">CARBURANT</label>
                                         <select id="v_carb"
                                             class="w-full p-3 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium cursor-pointer text-slate-700"
-                                            onchange="updateVrade()">
+                                            onchange="updateVvade()">
                                             <option value="Diesel" selected>Diesel</option>
                                             <option value="Essence">Essence</option>
                                         </select>
@@ -830,7 +877,7 @@
                             <div class="flex justify-between items-center cursor-pointer mb-3"
                                 onclick="toggleSection('chrono-content', 'icon-chrono')">
                                 <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer">Chronologie
+                                    class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Chronologie
                                     Dossier</label>
                                 <i id="icon-chrono" class="fa-solid fa-chevron-up text-blue-600"></i>
                             </div>
@@ -845,7 +892,7 @@
                                             Sinistre</label>
                                         <input type="date" id="v_sinistre"
                                             class="w-full p-2.5 bg-white border border-slate-200 rounded-xl input-focus outline-none text-sm font-medium text-slate-700"
-                                            onchange="updateVrade()">
+                                            onchange="updateVvade()">
                                     </div>
                                     <div>
                                         <label
@@ -873,7 +920,7 @@
                             <div class="flex justify-between items-center cursor-pointer mb-3"
                                 onclick="toggleSection('photo-content', 'icon-photo')">
                                 <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer">Photo
+                                    class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Photo
                                     du Véhicule</label>
                                 <i id="icon-photo" class="fa-solid fa-chevron-up text-blue-600"></i>
                             </div>
@@ -883,11 +930,11 @@
                                     <input type="file" id="v_photo_input" accept="image/*" class="hidden"
                                         onchange="handlePhotoUpload(this)">
                                     <button type="button" onclick="document.getElementById('v_photo_input').click()"
-                                        class="w-full py-3 bg-white border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-blue-400 hover:bg-blue-50 transition-all text-slate-500 group">
-                                        <i class="fa-solid fa-camera text-2xl group-hover:text-blue-500"></i>
-                                        <span
-                                            class="text-xs font-bold uppercase tracking-widest group-hover:text-blue-700">Ajouter
-                                            une Photo</span>
+                                        class="w-full h-24 bg-indigo-50/30 border-2 border-dashed border-indigo-200 rounded-3xl flex flex-col items-center justify-center gap-2 hover:border-indigo-400 hover:bg-indigo-50 transition-all text-indigo-500 group">
+                                        <i
+                                            class="fa-solid fa-camera text-2xl group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">Ajouter la Photo
+                                            du Véhicule</span>
                                     </button>
                                     <div id="v_photo_preview"
                                         class="mt-3 hidden relative rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-video bg-white">
@@ -908,21 +955,48 @@
                         <div class="flex justify-between items-center cursor-pointer mb-3"
                             onclick="toggleSection('finance-content', 'icon-finance')">
                             <label
-                                class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest cursor-pointer">Données
+                                class="block text-[12px] font-black text-[#991b1b] uppercase tracking-widest cursor-pointer">Données
                                 Financières</label>
                             <i id="icon-finance" class="fa-solid fa-chevron-up text-blue-600"></i>
                         </div>
                         <div id="finance-content" class="grid grid-cols-1 gap-1 transition-all duration-300 origin-top">
 
-                            <div class="mt-2 mb-4">
-                                <label
-                                    class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1">Valeur
-                                    à Neuf / Facture (Dhs)</label>
-                                <input type="text" id="v_valeur_display" placeholder="Saisir montant..."
-                                    class="w-full p-2.5 bg-white border border-blue-200 rounded-xl input-focus outline-none font-bold text-sm text-slate-900 placeholder-slate-300"
-                                    oninput="updateVrade();" onblur="finalizeFormat(this, 'v_valeur_raw')"
-                                    onkeydown="handleEnter(event, this)">
-                                <input type="hidden" id="v_valeur_raw" value="0">
+                            <div class="mt-2 mb-4 space-y-4">
+                                <div>
+                                    <label
+                                        class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1">Valeur
+                                        à Neuf / Facture (Dhs)</label>
+                                    <input type="text" id="v_valeur_display" placeholder="Montant Brût..."
+                                        class="w-full p-2.5 bg-white border border-blue-200 rounded-xl input-focus outline-none font-bold text-sm text-slate-900 placeholder-slate-300"
+                                        oninput="updateVvade();" onblur="finalizeFormat(this, 'v_valeur_raw')"
+                                        onkeydown="handleEnter(event, this)">
+                                    <input type="hidden" id="v_valeur_raw" value="0">
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-rose-800 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                                            Frais Appliqués
+                                            <i class="fa-solid fa-circle-info text-rose-400 cursor-help"
+                                                title="Inclut l'immatriculation (carte grise) et les frais de dossier. Ces montants sont déduits car ils ne sont pas valorisés dans la valeur résiduelle."></i>
+                                        </label>
+                                        <input type="text" id="v_frais_display" placeholder="Immat / Dossier..."
+                                            class="w-full p-2.5 bg-rose-50 border border-rose-100 rounded-xl input-focus outline-none font-bold text-sm text-rose-900 placeholder-rose-300"
+                                            oninput="updateVvade();" onblur="finalizeFormat(this, 'v_frais_raw')"
+                                            onkeydown="handleEnter(event, this)">
+                                        <input type="hidden" id="v_frais_raw" value="0">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1">Valeur
+                                            Nette</label>
+                                        <input type="text" id="v_val_nette_display" placeholder="Base de calcul..."
+                                            readonly
+                                            class="w-full p-2.5 bg-slate-100 border border-slate-200 rounded-xl outline-none font-bold text-sm text-blue-950 cursor-not-allowed">
+                                        <input type="hidden" id="v_val_nette_raw" value="0">
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="border-t border-blue-200/50 pt-4 space-y-4">
@@ -932,7 +1006,7 @@
                                         du Devis (Dhs)</label>
                                     <input type="text" id="v_devis_display" placeholder="Saisir montant..."
                                         class="w-full p-2.5 bg-white border border-blue-200 rounded-xl input-focus outline-none font-bold text-sm text-blue-900 placeholder-blue-300"
-                                        oninput="updateVrade();" onblur="finalizeFormat(this, 'v_devis_raw')"
+                                        oninput="updateVvade();" onblur="finalizeFormat(this, 'v_devis_raw')"
                                         onkeydown="handleEnter(event, this)">
                                     <input type="hidden" id="v_devis_raw" value="0">
                                 </div>
@@ -947,7 +1021,7 @@
                                     </div>
                                     <input type="text" id="v_accord_display" placeholder="Saisir accord..."
                                         class="w-full p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl input-focus outline-none font-bold text-sm text-emerald-700 placeholder-emerald-300"
-                                        oninput="updateVrade();" onblur="finalizeFormat(this, 'v_accord_raw')"
+                                        oninput="updateVvade();" onblur="finalizeFormat(this, 'v_accord_raw')"
                                         onkeydown="handleEnter(event, this)">
                                     <input type="hidden" id="v_accord_raw" value="0">
                                 </div>
@@ -987,42 +1061,42 @@
                                             <input type="checkbox" name="tech_reason"
                                                 value="Véhicule intégralement calciné"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Véhicule intégralement calciné</span>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="tech_reason"
                                                 value="Immersion totale (Inondation)"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Immersion totale (Inondation)</span>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="tech_reason"
                                                 value="Géométrie impossible à rétablir"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Géométrie impossible à rétablir</span>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="tech_reason"
                                                 value="Structure porteuse gravement endommagée"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Structure porteuse gravement endommagée</span>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="tech_reason"
                                                 value="Déformation des longerons ou du châssis"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Déformation des longerons ou du châssis</span>
                                         </div>
                                         <div class="checkbox-item">
                                             <input type="checkbox" name="tech_reason"
                                                 value="Défaillance des systèmes de sécurité"
                                                 class="mt-0.5 rounded text-red-600 focus:ring-red-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Défaillance des systèmes de sécurité</span>
                                         </div>
                                     </div>
@@ -1062,34 +1136,34 @@
                                             <input type="checkbox" name="eco_reason"
                                                 value="Procédure VEI (Réparations > Valeur)"
                                                 class="mt-0.5 rounded text-orange-600 focus:ring-orange-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Procédure VEI (Véhicule Économiquement Irréparable)</span>
                                         </div>
                                         <div class="checkbox-item checkbox-item-eco">
                                             <input type="checkbox" name="eco_reason"
                                                 value="Indisponibilité des pièces de rechange"
                                                 class="mt-0.5 rounded text-orange-600 focus:ring-orange-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Indisponibilité des pièces de rechange</span>
                                         </div>
                                         <div class="checkbox-item checkbox-item-eco">
                                             <input type="checkbox" name="eco_reason" value="Valeur de sauvetage élevée"
                                                 class="mt-0.5 rounded text-orange-600 focus:ring-orange-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Valeur de sauvetage élevée (Epave)</span>
                                         </div>
                                         <div class="checkbox-item checkbox-item-eco">
                                             <input type="checkbox" name="eco_reason"
                                                 value="Accord Commercial / Assureur"
                                                 class="mt-0.5 rounded text-orange-600 focus:ring-orange-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Accord Commercial / Assureur</span>
                                         </div>
                                         <div class="checkbox-item checkbox-item-eco">
                                             <input type="checkbox" name="eco_reason"
                                                 value="Risque d'aléas importants au démontage"
                                                 class="mt-0.5 rounded text-orange-600 focus:ring-orange-500"
-                                                onchange="updateVrade()">
+                                                onchange="updateVvade()">
                                             <span>Risque d'aléas importants au démontage</span>
                                         </div>
                                     </div>
@@ -1130,7 +1204,7 @@
                                     </label>
                                     <input type="checkbox" id="chk_apply_to_threshold"
                                         class="w-5 h-5 text-blue-900 rounded border-gray-300 focus:ring-blue-900 cursor-pointer transition-colors"
-                                        onchange="updateVrade()">
+                                        onchange="updateVvade()">
                                 </div>
                             </div>
 
@@ -1144,7 +1218,7 @@
                                             Compteur</label>
                                         <input type="number" id="v_km_compteur" value="0" placeholder="Ex: 150000"
                                             class="w-full p-2 bg-white border border-slate-200 rounded-xl input-focus outline-none font-mono-num text-sm text-center"
-                                            oninput="updateVrade()">
+                                            oninput="updateVvade()">
 
                                         <!-- KM Impact Display -->
                                         <div class="mt-2 text-right">
@@ -1161,7 +1235,7 @@
                                             class="block text-[10px] font-bold text-blue-900 uppercase tracking-widest mb-1.5">Entretien</label>
                                         <select id="v_entretien"
                                             class="w-full p-2 bg-white border border-slate-200 rounded-xl input-focus outline-none text-xs font-medium cursor-pointer"
-                                            onchange="updateVrade()">
+                                            onchange="updateVvade()">
                                             <option value="0">Standard (0%)</option>
                                             <option value="10">Suivi Concessionnaire (+10%)</option>
                                             <option value="5">Bon État (+5%)</option>
@@ -1279,7 +1353,7 @@
 
                     <!-- DÉTAIL DES APPRÉCIATIONS (NOUVELLE SECTION) -->
                     <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-100 col-span-1 md:col-span-2">
-                        <h4 class="text-[12px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-4 text-center">
+                        <h4 class="text-[13px] font-black text-[#991b1b] uppercase tracking-[0.2em] mb-4 text-center">
                             Détail des Appréciations & Dépréciation
                         </h4>
 
@@ -1287,7 +1361,7 @@
                             <!-- Colonne 1 : Détails Valeurs -->
                             <div class="space-y-4">
                                 <h5
-                                    class="text-[9px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2 mb-3">
+                                    class="text-[10px] font-black text-[#991b1b]/70 uppercase tracking-widest border-b border-red-50 pb-2 mb-3">
                                     Synthèse Expertise</h5>
                                 <div class="space-y-3 text-sm font-mono-num">
                                     <div
@@ -1342,7 +1416,7 @@
                             <div
                                 class="border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6 flex flex-col h-full">
                                 <h5
-                                    class="text-[9px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2 mb-3">
+                                    class="text-[10px] font-black text-[#991b1b]/70 uppercase tracking-widest border-b border-red-50 pb-2 mb-3">
                                     Tableau de Dépréciation (Prorata)</h5>
 
                                 <div
@@ -1358,7 +1432,7 @@
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody id="vradeTable" class="divide-y divide-slate-50 text-slate-600">
+                                        <tbody id="vvadeTable" class="divide-y divide-slate-50 text-slate-600">
                                             <!-- Rempli par JS -->
                                         </tbody>
                                     </table>
@@ -1376,17 +1450,16 @@
 
             <!-- RECAP TABLE -->
             <div class="bg-slate-50/50 p-8 border-t border-slate-100">
-                <h4 class="text-[11px] font-bold text-blue-900 uppercase tracking-[0.2em] mb-4 text-center">
+                <h4 class="text-[13px] font-black text-[#991b1b] uppercase tracking-[0.2em] mb-4 text-center">
                     Récapitulatif Financier</h4>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm font-mono-num border border-slate-200 rounded-xl bg-white">
                         <thead class="bg-blue-50 text-[11px] uppercase font-bold text-blue-900">
                             <tr>
-                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur à Neuf</th>
-                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur Base (Temps)
-                                </th>
-                                <th class="p-4 border-b border-r border-slate-200 text-center">Impact Correctifs
-                                </th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur à Neuf (Brût)</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Frais Déduits</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Valeur Nette (Base)</th>
+                                <th class="p-4 border-b border-r border-slate-200 text-center">Impact Vétusté</th>
                                 <th
                                     class="p-4 border-b border-r border-slate-200 text-center bg-blue-100/50 text-blue-900">
                                     Valeur Vénale Technique</th>
@@ -1398,7 +1471,10 @@
                         <tbody class="text-center font-medium text-slate-700">
                             <tr>
                                 <td class="p-4 border-r border-slate-200" id="dash_recap_val_neuf">0,00 Dhs</td>
-                                <td class="p-4 border-r border-slate-200" id="dash_recap_val_base">0,00 Dhs</td>
+                                <td class="p-4 border-r border-slate-200 text-rose-600 font-bold" id="dash_recap_frais">
+                                    0,00 Dhs</td>
+                                <td class="p-4 border-r border-slate-200 bg-blue-50/50 font-bold"
+                                    id="dash_recap_val_nette">0,00 Dhs</td>
                                 <td class="p-4 border-r border-slate-200" id="dash_recap_impact">0,00 Dhs</td>
                                 <td class="p-4 border-r border-slate-200 bg-blue-50/30 font-bold text-blue-900 text-lg"
                                     id="dash_recap_val_venale">0,00 Dhs</td>
@@ -1553,11 +1629,11 @@
 
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex gap-3">
                 <button onclick="backToBrands()"
-                    class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-100 transition-all uppercase">
-                    Retour / Annuler
+                    class="flex-1 h-10 bg-white border border-slate-200 text-slate-600 font-black text-[10px] rounded-xl hover:bg-slate-100 transition-all uppercase tracking-widest">
+                    Retour
                 </button>
                 <button onclick="closeCarPicker()"
-                    class="flex-1 py-3 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all uppercase">
+                    class="flex-1 h-10 bg-[#1e3a8a] text-white font-black text-[10px] rounded-xl hover:bg-blue-800 shadow-md shadow-blue-200 transition-all uppercase tracking-widest">
                     Saisie Manuelle
                 </button>
             </div>
@@ -1611,7 +1687,7 @@
                                 Dossier Réf.</div>
                             <div id="pdf-ref"
                                 style="font-size: 13px; font-weight: 600; color: #1e3a8a; font-family: monospace; white-space: nowrap;">
-                                VRADE-AUTOGEN</div>
+                                VVADE-AUTOGEN</div>
                         </div>
                         <div
                             style="font-size: 11.5px; color: #000; white-space: nowrap; font-weight: 700; text-align: right;">
@@ -1639,33 +1715,33 @@
                     <h2 class="pdf-section-title">1. IDENTIFICATION DOSSIER</h2>
                     <table class="pdf-table-compact" style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 25%; font-weight: 700; color: #000;">Référence :</td>
-                            <td id="pdf-ref" style="width: 25%; color: #000; font-weight: 500;">--</td>
-                            <td style="width: 25%; font-weight: 700; color: #000;">Type Dossier :</td>
-                            <td id="pdf-type-dossier" style="width: 25%; color: #000; font-weight: 500;">NORMAL</td>
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">Référence :</td>
+                            <td id="pdf-ref" style="width: 25%; color: #1e293b; font-weight: 800;">--</td>
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">Type Dossier :</td>
+                            <td id="pdf-type-dossier" style="width: 25%; color: #1e293b; font-weight: 800;">NORMAL</td>
                         </tr>
                         <tr>
-                            <td style="width: 25%; font-weight: 700; color: #000;">Assuré :</td>
-                            <td id="pdf-nom-assure" style="width: 25%; color: #000;">--</td>
-                            <td style="width: 25%; font-weight: 700; color: #000;">N° Sinistre :</td>
-                            <td id="pdf-num-sinistre" style="width: 25%; color: #000;">--</td>
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">Assuré :</td>
+                            <td id="pdf-nom-assure" style="width: 25%; color: #1e293b; font-weight: 800;">--</td>
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">N° Sinistre :</td>
+                            <td id="pdf-num-sinistre" style="width: 25%; color: #1e293b; font-weight: 800;">--</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 700; color: #000;">Cie Assurance :</td>
-                            <td id="pdf-cie-assurance" style="color: #000;">--</td>
-                            <td style="font-weight: 700; color: #000;">Cie Adverse :</td>
-                            <td id="pdf-cie-adverse" style="color: #000;">--</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Cie Assurance :</td>
+                            <td id="pdf-cie-assurance" style="color: #1e293b; font-weight: 800;">--</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Cie Adverse :</td>
+                            <td id="pdf-cie-adverse" style="color: #1e293b; font-weight: 800;">--</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: 700; color: #000;">Requérant :</td>
-                            <td id="pdf-requerant" style="color: #000;">--</td>
-                            <td style="font-weight: 700; color: #000;">Garage :</td>
-                            <td id="pdf-garage" style="color: #000;">--</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Requérant :</td>
+                            <td id="pdf-requerant" style="color: #1e293b; font-weight: 800;">--</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Garage :</td>
+                            <td id="pdf-garage" style="color: #1e293b; font-weight: 800;">--</td>
                         </tr>
                     </table>
                     <div style="margin-top: 4px; padding-top: 4px;">
                         <span style="font-size: 0.9em; font-weight: 700; color: #1e3a8a;">GARANTIES : </span>
-                        <span id="pdf-garanties" style="font-size: 0.9em; color: #000;">--</span>
+                        <span id="pdf-garanties" style="font-size: 0.9em; color: #1e293b; font-weight: 800;">--</span>
                     </div>
                 </div>
 
@@ -1678,10 +1754,10 @@
                             <td style="width: 33%; color: #1e3a8a;">2ème Expert</td>
                             <td style="width: 34%; color: #1e3a8a;">Arbitrage</td>
                         </tr>
-                        <tr style="font-size: 1.1em;">
-                            <td id="pdf-expert1" style="color: #000;">--</td>
-                            <td id="pdf-expert2" style="color: #000;">--</td>
-                            <td id="pdf-arbitrage" style="color: #000;">--</td>
+                        <tr style="font-size: 1.1em; font-weight: 800;">
+                            <td id="pdf-expert1" style="color: #1e293b;">--</td>
+                            <td id="pdf-expert2" style="color: #1e293b;">--</td>
+                            <td id="pdf-arbitrage" style="color: #1e293b;">--</td>
                         </tr>
                     </table>
                 </div>
@@ -1694,41 +1770,43 @@
                         <div style="flex: 1;">
                             <table class="pdf-table-compact" style="width: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style="width: 35%; font-weight: 700; color: #000;">Marque / Modèle :</td>
+                                    <td style="width: 35%; font-weight: 700; color: #1e3a8a;">Marque / Modèle :</td>
                                     <td id="pdf-marque-modele"
-                                        style="width: 65%; text-transform: uppercase; color: #000;">--</td>
+                                        style="width: 65%; text-transform: uppercase; color: #1e293b; font-weight: 800;">
+                                        --</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Catégorie :</td>
-                                    <td id="pdf-cat" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Catégorie :</td>
+                                    <td id="pdf-cat" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Immatriculation :</td>
-                                    <td id="pdf-mat" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Immatriculation :</td>
+                                    <td id="pdf-mat" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Genre :</td>
-                                    <td id="pdf-genre" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Genre :</td>
+                                    <td id="pdf-genre" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">N° Châssis (VIN) :</td>
-                                    <td id="pdf-vin" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">N° Châssis (VIN) :</td>
+                                    <td id="pdf-vin" style="color: #1e293b; font-family: monospace; font-weight: 800;">
+                                        --</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Mise en circulation :</td>
-                                    <td id="pdf-dmec" style="color: #000;">--/--/----</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Mise en circulation :</td>
+                                    <td id="pdf-dmec" style="color: #1e293b; font-weight: 800;">--/--/----</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Énergie :</td>
-                                    <td id="pdf-energie" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Énergie :</td>
+                                    <td id="pdf-energie" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Puissance Fiscale :</td>
-                                    <td id="pdf-puissance" style="color: #000;">--</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Puissance Fiscale :</td>
+                                    <td id="pdf-puissance" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                                 <tr>
-                                    <td style="font-weight: 700; color: #000;">Kilométrage :</td>
-                                    <td id="pdf-km" style="color: #000;">0 km</td>
+                                    <td style="font-weight: 700; color: #1e3a8a;">Kilométrage :</td>
+                                    <td id="pdf-km" style="color: #1e293b; font-weight: 800;">--</td>
                                 </tr>
                             </table>
                         </div>
@@ -1747,55 +1825,70 @@
                     <table class="pdf-table-compact" style="width: 100%; border-collapse: collapse;">
                         <!-- Ligne 1 : Sinistre & Mission -->
                         <tr>
-                            <td style="width: 25%; font-weight: 700; color: #000;">Date du Sinistre :</td>
-                            <td id="pdf-sinistre" style="width: 25%; color: #000;">--/--/----</td>
-                            <td style="width: 25%; font-weight: 700; color: #000;">Date MISSION :</td>
-                            <td id="pdf-date-reception" style="width: 25%; color: #000;">--/--/----
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">Date du Sinistre :</td>
+                            <td id="pdf-sinistre" style="width: 25%; color: #1e293b; font-weight: 800;">--/--/----</td>
+                            <td style="width: 25%; font-weight: 700; color: #1e3a8a;">Date MISSION :</td>
+                            <td id="pdf-date-reception" style="width: 25%; color: #1e293b; font-weight: 800;">--/--/----
                             </td>
                         </tr>
                         <!-- Ligne 2 : Expertise -->
                         <tr>
-                            <td style="font-weight: 700; color: #000;">Date Expertise :</td>
-                            <td id="pdf-date-expertise" style="color: #000;">--/--/----</td>
-                            <td style="font-weight: 700; color: #000;">Ancienneté :</td>
-                            <td id="pdf-anciennete" style="color: #000;">0 ans, 0 jrs</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Date Expertise :</td>
+                            <td id="pdf-date-expertise" style="color: #1e293b; font-weight: 800;">--/--/----</td>
+                            <td style="font-weight: 700; color: #1e3a8a;">Ancienneté :</td>
+                            <td id="pdf-anciennete" style="color: #1e293b; font-weight: 800;">0 ans, 0 jrs</td>
                         </tr>
                     </table>
                 </div>
 
                 <!-- 5. DONNÉES FINANCIÈRES -->
-                <div class="pdf-block" style="padding: 6px; margin-bottom: 4px; background-color: #f0f9ff;">
+                <div class="pdf-block"
+                    style="padding: 6px; margin-bottom: 4px; background-color: #f8fafc; border: 1px solid #e2e8f0;">
                     <h2 class="pdf-section-title">5. DONNÉES FINANCIÈRES</h2>
                     <table class="pdf-table-compact" style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style="width: 20%; color: #000;">
-                                <div style="font-weight: 700; font-size: 0.85em;">Valeur à Neuf</div>
-                                <div id="pdf-val-neuve">0,00 Dhs</div>
+                            <td style="width: 20%;">
+                                <div
+                                    style="font-weight: 700; font-size: 0.8em; color: #1e3a8a; text-transform: uppercase;">
+                                    Valeur à Neuf (Net)</div>
+                                <div id="pdf-val-neuve" style="color: #1e3a8a; font-weight: 800;">0,00 Dhs</div>
                             </td>
-                            <td style="width: 20%; color: #000;">
-                                <div style="font-weight: 700; font-size: 0.85em;">Montant Devis</div>
-                                <div id="pdf-devis">0,00 Dhs</div>
+                            <td style="width: 20%;">
+                                <div
+                                    style="font-weight: 700; font-size: 0.8em; color: #1e3a8a; text-transform: uppercase;">
+                                    Montant Devis</div>
+                                <div id="pdf-devis" style="color: #0f172a; font-weight: 800;">0,00 Dhs</div>
                             </td>
-                            <td id="pdf-cell-accord" style="width: 20%; color: #059669; display: none;">
-                                <div style="font-weight: 700; font-size: 0.85em;">Accord Devis</div>
-                                <div id="pdf-accord">0,00 Dhs</div>
+                            <td id="pdf-cell-accord"
+                                style="width: 20%; display: none; background-color: #f0fdf4; border-radius: 4px;">
+                                <div
+                                    style="font-weight: 700; font-size: 0.8em; color: #166534; text-transform: uppercase;">
+                                    Accord Devis</div>
+                                <div id="pdf-accord" style="color: #15803d; font-weight: 800;">0,00 Dhs</div>
                             </td>
-                            <td style="width: 20%; color: #000;">
-                                <div style="font-weight: 700; font-size: 0.85em;">Corr. KM</div>
-                                <div id="pdf-val-correctif-km">--</div>
+                            <td style="width: 20%;">
+                                <div
+                                    style="font-weight: 700; font-size: 0.8em; color: #1e3a8a; text-transform: uppercase;">
+                                    Corr. KM</div>
+                                <div id="pdf-val-correctif-km" style="font-weight: 800; color: #1e293b;">--</div>
                             </td>
-                            <td style="width: 20%; color: #000;">
-                                <div style="font-weight: 700; font-size: 0.85em;">Corr. Entretien</div>
-                                <div id="pdf-val-correctif-ent">--</div>
+                            <td style="width: 20%;">
+                                <div
+                                    style="font-weight: 700; font-size: 0.8em; color: #1e3a8a; text-transform: uppercase;">
+                                    Corr. Entretien</div>
+                                <div id="pdf-val-correctif-ent" style="font-weight: 800; color: #1e293b;">--</div>
                             </td>
                         </tr>
                         <tr style="height: 4px;">
                             <td></td>
                         </tr> <!-- Spacer row -->
                         <tr>
-                            <td colspan="5" style="color: #000;"><span
-                                    style="font-weight: 700; font-size: 0.85em;">Ajustement Marché/État :</span> <span
-                                    id="pdf-val-market">0,00 Dhs (0%)</span></td>
+                            <td colspan="5">
+                                <span
+                                    style="font-weight: 700; font-size: 0.8em; color: #1e3a8a; text-transform: uppercase;">Ajustement
+                                    Marché/État :</span>
+                                <span id="pdf-val-market" style="font-weight: 800; color: #1e3a8a;">0,00 Dhs (0%)</span>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -1803,7 +1896,7 @@
             </div> <!-- FIN pdf-page1-content -->
 
             <!-- PAGE 2 : RECAP, DÉCISION & DÉPRÉCIATION -->
-            <div id="pdf-page2-content" style="page-break-before: always;">
+            <div id="pdf-page2-content">
                 <!-- SPACER INITIAL PAGE 2 (POUR EN-TÊTE RÉPÉTÉ) -->
                 <div style="height: 18mm;"></div>
 
@@ -1812,21 +1905,29 @@
                     <h2 class="pdf-section-title" style="border-bottom: none !important;">6. RÉCAPITULATIF CALCUL</h2>
                     <div style="overflow: hidden;">
                         <table class="pdf-table-compact"
-                            style="width: 100%; border-collapse: collapse; font-size: 0.9em; text-align: center; color: #000;">
+                            style="width: 100%; border-collapse: collapse; font-size: 0.9em; text-align: center;">
                             <thead
-                                style="background: #f1f5f9; color: #000; font-weight: 700; text-transform: uppercase;">
+                                style="background: #f1f5f9; color: #1e293b; font-weight: 700; text-transform: uppercase;">
                                 <tr>
-                                    <th style="padding: 6px;">Valeur Base</th>
+                                    <th style="padding: 6px;">V. Brût</th>
+                                    <th style="padding: 6px;">Frais</th>
+                                    <th style="padding: 6px; background: #e2e8f0;">Valeur Nette</th>
                                     <th style="padding: 6px;">Correctifs</th>
-                                    <th style="padding: 6px; background: #e0f2fe;">VRADE
-                                        Technique</th>
-                                    <th style="padding: 6px;">Seuil (2/3)</th>
+                                    <th style="padding: 6px; background: #dbeafe; color: #1e3a8a;">VVADE Tech</th>
+                                    <th style="padding: 6px; color: #991b1b;">Seuil (2/3)</th>
                                 </tr>
                             </thead>
-                            <tbody style="color: #000;">
+                            <tbody>
                                 <tr>
-                                    <td id="pdf-recap-val-base" style="padding: 6px;">0,00 Dhs</td>
-                                    <td id="pdf-recap-impact" style="padding: 6px;">0,00 Dhs</td>
+                                    <td id="pdf-recap-val-brut" style="padding: 6px; color: #1e293b; font-weight: 800;">
+                                        0,00 Dhs</td>
+                                    <td id="pdf-recap-frais" style="padding: 6px; color: #991b1b; font-weight: 800;">
+                                        0,00 Dhs</td>
+                                    <td id="pdf-recap-val-nette"
+                                        style="padding: 6px; background: #f8fafc; font-weight: 800; color: #1e293b;">
+                                        0,00 Dhs</td>
+                                    <td id="pdf-recap-impact" style="padding: 6px; font-weight: 800; color: #1e293b;">
+                                        0,00 Dhs</td>
                                     <td id="pdf-recap-val-venale"
                                         style="padding: 6px; background: #f0f9ff; font-weight: 800;">0,00 Dhs</td>
                                     <td id="pdf-recap-seuil"
@@ -1851,9 +1952,9 @@
                     <div style="height: 10mm;"></div>
 
                     <div class="pdf-block"
-                        style="background-color: #fff; padding: 0; text-align: center; margin-bottom: 4px; display: block; width: 100%;">
+                        style="background-color: #fff; padding: 12px 0; text-align: center; margin-bottom: 4px; display: block; width: 100%;">
                         <div id="pdf-decision-box"
-                            style="font-weight: 900; font-size: 1.15em; color: #000; text-transform: uppercase; border: 4px solid #000; padding: 8px 30px; border-radius: 4px; box-shadow: 2px 2px 0px rgba(0,0,0,0.1); display: inline-block; margin: 0 auto;">
+                            style="font-weight: 900; font-size: 1.3em; color: #1e3a8a; text-transform: uppercase; border: 3px solid #1e3a8a; padding: 10px 40px; border-radius: 8px; background: #f0f9ff; display: inline-block; margin: 0 auto; letter-spacing: 0.05em;">
                             -- DÉCISION --</div>
                     </div>
                     <div id="pdf-tech-reason"
@@ -1870,9 +1971,9 @@
                     <h2 class="pdf-section-title" style="border-bottom: none !important;">7. DÉTAIL DÉPRÉCIATION</h2>
                     <div style="overflow: hidden;">
                         <table class="pdf-table-compact"
-                            style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; color: #000;">
+                            style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
                             <thead>
-                                <tr style="background: #e2e8f0; color: #1e293b; border-bottom: 2px solid #cbd5e1;">
+                                <tr style="background: #1e3a8a; color: #ffffff;">
                                     <th
                                         style="padding: 4px 8px; font-weight: 800; text-transform: uppercase; font-size: 11px;">
                                         Année</th>
@@ -1903,7 +2004,7 @@
                             <thead style="background-color: #f1f5f9; color: #334155; text-transform: uppercase;">
                                 <tr>
                                     <th style="text-align: left; padding: 6px 10px; font-weight: 700; width: 65%;">
-                                        LIBELLÉ CALCUL VRADE</th>
+                                        LIBELLÉ CALCUL VVADE</th>
                                     <th style="text-align: right; padding: 6px 10px; font-weight: 700; width: 35%;">
                                         MONTANT</th>
                                 </tr>
@@ -1911,31 +2012,33 @@
                             <tbody style="font-size: 11.5px;">
                                 <!-- Ligne A: Valeur Résiduelle -->
                                 <tr style="border-bottom: 1px solid #e2e8f0;">
-                                    <td style="padding: 6px 10px; color: #475569; font-weight: 500;">
+                                    <td style="padding: 6px 10px; color: #1e3a8a; font-weight: 600;">
                                         Valeur Résiduelle (Selon tableau dépréciation)
                                     </td>
                                     <td id="pdf-recap-expert-base"
-                                        style="padding: 6px 10px; text-align: right; font-weight: 700; color: #1e293b;">
+                                        style="padding: 6px 10px; text-align: right; font-weight: 800; color: #1e293b;">
                                         0,00 Dhs</td>
                                 </tr>
 
                                 <!-- Ligne B1: Correctif Kilométrique -->
                                 <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-                                    <td style="padding: 6px 10px; color: #475569; font-weight: 500;">
+                                    <td id="pdf-recap-expert-km-label"
+                                        style="padding: 6px 10px; color: #1e3a8a; font-weight: 600;">
                                         Correctif Kilométrique
                                     </td>
                                     <td id="pdf-recap-expert-km"
-                                        style="padding: 6px 10px; text-align: right; font-weight: 700; color: #1e293b;">
+                                        style="padding: 6px 10px; text-align: right; font-weight: 800; color: #1e293b;">
                                         0,00 Dhs</td>
                                 </tr>
 
                                 <!-- Ligne B2: Correctif Entretien -->
                                 <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-                                    <td style="padding: 6px 10px; color: #475569; font-weight: 500;">
+                                    <td id="pdf-recap-expert-ent-label"
+                                        style="padding: 6px 10px; color: #1e3a8a; font-weight: 600;">
                                         Correctif Entretien
                                     </td>
                                     <td id="pdf-recap-expert-ent"
-                                        style="padding: 6px 10px; text-align: right; font-weight: 700; color: #1e293b;">
+                                        style="padding: 6px 10px; text-align: right; font-weight: 800; color: #1e293b;">
                                         0,00 Dhs</td>
                                 </tr>
 
@@ -1945,7 +2048,7 @@
                                         Ajustement Expert : Marché & État (<span id="pdf-recap-expert-taux">0%</span>)
                                     </td>
                                     <td id="pdf-recap-expert-market"
-                                        style="padding: 6px 10px; text-align: right; font-weight: 700; color: #166534;">
+                                        style="padding: 6px 10px; text-align: right; font-weight: 800; color: #166534;">
                                         0,00 Dhs</td>
                                 </tr>
 
@@ -1953,7 +2056,7 @@
                                 <tr style="background-color: #1e3a8a; color: #ffffff;">
                                     <td
                                         style="padding: 8px 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        VRADE FINALE RETENUE
+                                        VVADE FINALE RETENUE
                                     </td>
                                     <td id="pdf-recap-expert-final"
                                         style="padding: 8px 10px; text-align: right; font-weight: 900; font-size: 13px; letter-spacing: 0.5px;">
@@ -1970,34 +2073,79 @@
 
                 <script>
                     // --- CAR PICKER LOGIC ---
+                    const CARS_BY_CATEGORY = {
+                        "Deux-Roues": ["APRILIA", "DERBI", "DUCATI", "GILERA", "KAWASAKI", "PIAGGIO / VESPA"],
+                        "Divers": ["AUTRE"],
+                        "Généralistes Européennes": ["CITROEN", "DACIA", "FIAT", "LADA", "OPEL", "PEUGEOT", "RENAULT", "ROVER-MG", "SAAB", "SEAT", "SKODA", "SMART", "TALBOT / SIMCA", "VOLKSWAGEN"],
+                        "Marques Américaines": ["CADILLAC", "CHEVROLET", "CHRYSLER", "DODGE", "FORD", "JEEP", "TESLA"],
+                        "Marques Asiatiques": ["DAIHATSU", "HONDA", "HYUNDAI", "INFINITI", "KIA", "LEXUS", "MAZDA", "MITSUBISHI", "NISSAN", "SSANGYONG", "SUBARU", "SUZUKI", "TOYOTA"],
+                        "Premium & Luxe": ["ALFA ROMEO", "AUDI", "BENTLEY", "BMW", "DS", "JAGUAR", "LAMBORGHINI", "LANCIA", "LAND ROVER", "LOTUS", "MASERATI", "MERCEDES-BENZ", "MINI", "PORSCHE", "ROLLS ROYCE", "VOLVO"],
+                        "Utilitaires & Poids Lourds": ["FUSO", "ISUZU", "IVECO", "MAN", "SCANIA"]
+                    };
+
                     const CARS_DATA = {
-                        "ALFA ROMEO": ["GIULIETTA", "STELVIO", "GIULIA", "TONALE", "MITO"],
-                        "AUDI": ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q5", "Q7", "Q8", "E-TRON"],
-                        "BMW": ["SERIE 1", "SERIE 2", "SERIE 3", "SERIE 4", "SERIE 5", "SERIE 7", "X1", "X2", "X3", "X4", "X5", "X6", "X7"],
-                        "CITROEN": ["C1", "C3", "C3 AIRCROSS", "C4", "C4 CACTUS", "C5 AIRCROSS", "BERLINGO", "JUMPY"],
-                        "DACIA": ["LOGAN", "SANDERO", "STEPWAY", "DUSTER", "LODGY", "DOKKER", "SPRING"],
-                        "FIAT": ["500", "500X", "PANDA", "TIPO", "FIORINO", "DOBLO", "DUCATO"],
-                        "FORD": ["FIESTA", "FOCUS", "FUSION", "PUMA", "KUGA", "RANGER", "TRANSIT"],
-                        "HONDA": ["CIVIC", "CR-V", "HR-V", "JAZZ", "ACCORD"],
-                        "HYUNDAI": ["I10", "I20", "I30", "ACCENT", "ELANTRA", "TUCSON", "SANTA FE", "KONA", "BAYON"],
-                        "JEEP": ["RENEGADE", "COMPASS", "CHEROKEE", "GRAND CHEROKEE", "WRANGLER"],
-                        "KIA": ["PICANTO", "RIO", "CEED", "SPORTAGE", "SORENTO", "K5", "NIRO", "EV6"],
-                        "LAND ROVER": ["EVOQUE", "VELAR", "DEFENDER", "DISCOVERY", "RANGE ROVER SPORT"],
-                        "MAZDA": ["2", "3", "CX-3", "CX-30", "CX-5", "CX-9"],
-                        "MERCEDES": ["CLASSE A", "CLASSE B", "CLASSE C", "CLASSE E", "CLASSE S", "CLA", "GLA", "GLB", "GLC", "GLE", "GLS", "VITO"],
-                        "MINI": ["HATCH", "COUNTRYMAN", "CLUBMAN"],
-                        "MITSUBISHI": ["ASX", "ECLIPSE CROSS", "PAJERO", "L200"],
-                        "NISSAN": ["MICRA", "JUKE", "QASHQAI", "X-TRAIL", "NAVARA"],
-                        "OPEL": ["CORSA", "ASTRA", "MOKKA", "GRANDLAND", "CROSSLAND", "INSIGNIA"],
-                        "PEUGEOT": ["108", "208", "308", "408", "508", "2008", "3008", "5008", "PARTNER", "EXPERT", "BOXER"],
-                        "PORSCHE": ["911", "CAYENNE", "MACAN", "PANAMERA", "TAYCAN"],
-                        "RENAULT": ["KWID", "CLIO", "MEGANE", "CAPTUR", "KADJAR", "ARKANA", "TALISMAN", "KOLEOS", "EXPRESS", "KANGOO", "MASTER"],
-                        "SEAT": ["IBIZA", "LEON", "ARONA", "ATECA", "TARRACO"],
-                        "SKODA": ["FABIA", "SCALA", "OCTAVIA", "SUPERB", "KAMIQ", "KAROQ", "KODIAQ"],
-                        "SUZUKI": ["SWIFT", "VITARA", "JIMNY", "S-CROSS", "CELERIO"],
-                        "TOYOTA": ["YARIS", "COROLLA", "C-HR", "RAV4", "PRADO", "HILUX", "LAND CRUISER"],
-                        "VOLKSWAGEN": ["POLO", "GOLF", "T-CROSS", "T-ROC", "TIGUAN", "TOUAREG", "PASSAT", "CADDY", "TRANSPORTER"],
-                        "VOLVO": ["XC40", "XC60", "XC90", "V60", "S90"]
+                        "ALFA ROMEO": ["GIULIA", "GIULIETTA", "STELVIO", "TONALE"],
+                        "APRILIA": ["RS", "SRV", "TUONO"],
+                        "AUDI": ["80", "A1", "A3", "A4", "A5", "A6", "Q2", "Q3", "Q5", "Q7", "Q8"],
+                        "AUTRE": ["(MODÈLES NON RÉPERTORIÉS)"],
+                        "BENTLEY": ["BENTAYGA", "CONTINENTAL GT", "FLYING SPUR"],
+                        "BMW": ["SÉRIE 1", "SÉRIE 3", "SÉRIE 3 E30", "SÉRIE 3 E36", "SÉRIE 5", "SÉRIE 5 E34", "X1", "X3", "X5", "X6"],
+                        "CADILLAC": ["CT4", "ESCALADE", "XT4", "XT5"],
+                        "CHEVROLET": ["CAMARO", "CAPTIVA", "CRUZE", "SILVERADO", "SPARK"],
+                        "CHRYSLER": ["300C", "PACIFICA", "VOYAGER"],
+                        "CITROEN": ["AX", "BERLINGO", "BX", "C1", "C3", "C3 AIRCROSS", "C4", "C5 AIRCROSS", "JUMPER", "JUMPY", "XANTIA", "XM", "ZX"],
+                        "DACIA": ["DOKKER", "DUSTER", "JOGGER", "LODGY", "LOGAN", "SANDERO", "SPRING"],
+                        "DAIHATSU": ["CUORE", "SIRION", "TERIOS"],
+                        "DERBI": ["SENDA", "VARIANT"],
+                        "DODGE": ["CHALLENGER", "CHARGER", "DURANGO", "RAM"],
+                        "DS": ["DS 3", "DS 4", "DS 7", "DS 9"],
+                        "DUCATI": ["MONSTER", "MULTISTRADA", "PANIGALE", "SCRAMBLER"],
+                        "FIAT": ["500", "DOBLO", "DUCATO", "FIORINO", "PANDA", "PUNTO", "TIPO"],
+                        "FORD": ["ESCORT", "FIESTA", "FOCUS", "KUGA", "MONDEO", "PUMA", "RANGER", "TRANSIT"],
+                        "FUSO": ["CANTER"],
+                        "GILERA": ["GP800", "NEXUS", "RUNNER"],
+                        "HONDA": ["ACCORD", "CIVIC", "CIVIC EG", "CR-V", "HR-V", "JAZZ"],
+                        "HYUNDAI": ["ACCENT", "CRETA", "ELANTRA", "I10", "I20", "I30", "SANTA FE", "TUCSON"],
+                        "INFINITI": ["Q30", "Q50", "QX70"],
+                        "ISUZU": ["D-MAX", "F-SERIES", "N-SERIES"],
+                        "IVECO": ["DAILY", "EUROCARGO", "S-WAY", "STRALIS"],
+                        "JAGUAR": ["E-PACE", "F-PACE", "I-PACE", "XE", "XF"],
+                        "JEEP": ["CHEROKEE", "CHEROKEE XJ", "COMPASS", "GRAND CHEROKEE", "RENEGADE", "WRANGLER"],
+                        "KAWASAKI": ["NINJA", "VERSYS", "VULCAN", "Z900"],
+                        "KIA": ["CEED", "NIRO", "PICANTO", "RIO", "SORENTO", "SPORTAGE"],
+                        "LADA": ["GRANTA", "NIVA", "VESTA"],
+                        "LAMBORGHINI": ["AVENTADOR", "HURACÁN", "URUS"],
+                        "LANCIA": ["DELTA", "YPSILON"],
+                        "LAND ROVER": ["DEFENDER", "DISCOVERY", "EVOQUE", "RANGE ROVER", "VELAR"],
+                        "LEXUS": ["CT", "IS", "NX", "RX", "UX"],
+                        "LOTUS": ["ELISE", "EMIRA", "EVORA", "EXIGE"],
+                        "MAN": ["TGE", "TGL", "TGM", "TGS", "TGX"],
+                        "MASERATI": ["GHIBLI", "GRECALE", "LEVANTE", "QUATTROPORTE"],
+                        "MAZDA": ["CX-3", "CX-30", "CX-5", "MAZDA2", "MAZDA3"],
+                        "MERCEDES-BENZ": ["190E", "CLASSE A", "CLASSE C", "CLASSE E", "GLA", "GLC", "GLE", "SPRINTER", "VITO"],
+                        "MINI": ["CLUBMAN", "COUNTRYMAN", "HATCH"],
+                        "MITSUBISHI": ["ASX", "ECLIPSE CROSS", "L200", "PAJERO", "SPACE STAR"],
+                        "NISSAN": ["JUKE", "MICRA", "MICRA K11", "NAVARA", "PATROL", "QASHQAI", "X-TRAIL"],
+                        "OPEL": ["ASTRA", "COMBO", "CORSA", "CROSSLAND", "GRANDLAND", "MOKKA", "ZAFIRA"],
+                        "PEUGEOT": ["2008", "205", "208", "3008", "306", "307", "308", "309", "405", "406", "407", "5008", "508", "BOXER", "EXPERT", "PARTNER"],
+                        "PIAGGIO / VESPA": ["BEVERLY", "GTS", "LIBERTY", "MP3", "PRIMAVERA"],
+                        "PORSCHE": ["911", "CAYENNE", "MACAN", "PANAMERA"],
+                        "RENAULT": ["AUSTRAL", "CAPTUR", "CLIO", "CLIO I", "CLIO II", "CLIO III", "CLIO IV", "CLIO V", "KADJAR", "KANGOO", "LAGUNA", "MASTER", "MÉGANE", "MÉGANE I", "MÉGANE II", "MÉGANE III", "MÉGANE IV", "R11", "R19", "R19 CHAMADE", "R9", "SAFRANE", "TALISMAN", "TRAFIC"],
+                        "ROLLS ROYCE": ["CULLINAN", "GHOST", "PHANTOM", "WRAITH"],
+                        "ROVER-MG": ["MG HS", "MG ZS", "MG4 / ROVER 75"],
+                        "SAAB": ["9-3", "9-5"],
+                        "SCANIA": ["SÉRIE G", "SÉRIE P", "SÉRIE R", "SÉRIE S"],
+                        "SEAT": ["ARONA", "ATECA", "IBIZA", "LEON", "TARRACO"],
+                        "SKODA": ["FABIA", "KAMIQ", "KAROQ", "KODIAQ", "OCTAVIA", "SCALA"],
+                        "SMART": ["FORFOUR", "FORTWO"],
+                        "SSANGYONG": ["KORANDO", "MUSSO", "REXTON", "TIVOLI"],
+                        "SUBARU": ["FORESTER", "IMPREZA", "OUTBACK", "XV"],
+                        "SUZUKI": ["IGNIS", "JIMNY", "S-CROSS", "SWIFT", "VITARA"],
+                        "TALBOT / SIMCA": ["1100", "HORIZON", "SAMBA"],
+                        "TESLA": ["MODEL 3", "MODEL S", "MODEL X", "MODEL Y"],
+                        "TOYOTA": ["C-HR", "COROLLA", "COROLLA E100", "COROLLA E90", "HILUX", "LAND CRUISER", "PRADO", "RAV4", "YARIS"],
+                        "VOLKSWAGEN": ["CADDY", "CRAFTER", "GOLF", "GOLF II", "GOLF III", "GOLF IV", "PASSAT", "POLO", "T-ROC", "TIGUAN", "TOUAREG", "TRANSPORTER"],
+                        "VOLVO": ["S60", "V60", "XC40", "XC60", "XC90"]
                     };
 
                     let selectedBrand = "";
@@ -2020,15 +2168,47 @@
                         title.innerText = "SÉLECTIONNER UNE MARQUE";
                         searchInput.placeholder = "Rechercher une marque...";
                         searchInput.value = "";
+                        container.innerHTML = "";
 
-                        const brands = Object.keys(CARS_DATA).sort();
-                        drawItems(brands, (brand) => {
-                            selectedBrand = brand;
-                            renderModels(brand);
-                        });
+                        // Utilisation des catégories si disponibles
+                        if (typeof CARS_BY_CATEGORY !== 'undefined') {
+                            Object.keys(CARS_BY_CATEGORY).sort().forEach(cat => {
+                                // Header de catégorie avec style inline pour visibilité immédiate dans la grille
+                                const catHeader = document.createElement('div');
+                                catHeader.className = "car-category-header";
+                                // Force full width styling
+                                catHeader.style.cssText = "grid-column: 1 / -1; font-weight: 800; color: #334155; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase; font-size: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; letter-spacing: 0.05em;";
+                                catHeader.innerText = cat;
+                                container.appendChild(catHeader);
+
+                                // Marques de la catégorie
+                                CARS_BY_CATEGORY[cat].forEach(brand => {
+                                    drawBrandItem(container, brand, cat);
+                                });
+                            });
+                        } else {
+                            // Fallback ancien mode
+                            const brands = Object.keys(CARS_DATA).sort();
+                            drawItems(brands, (brand) => {
+                                selectedBrand = brand;
+                                renderModels(brand);
+                            });
+                        }
                     }
 
-                    function renderModels(brand) {
+                    // Helper pour dessiner une marque (extracted to avoid duplication)
+                    function drawBrandItem(container, brand, cat) {
+                        const el = document.createElement('div');
+                        el.className = "car-item";
+                        el.innerText = brand;
+                        el.onclick = () => {
+                            selectedBrand = brand;
+                            renderModels(brand, cat);
+                        };
+                        container.appendChild(el);
+                    }
+
+                    function renderModels(brand, cat) {
                         const container = document.getElementById('car-picker-grid');
                         const title = document.getElementById('car-picker-title');
                         const searchInput = document.getElementById('car-picker-search');
@@ -2041,10 +2221,29 @@
                         drawItems(models, (model) => {
                             const input = document.getElementById('v_marque_modele');
                             input.value = brand + " " + model;
+
+                            // --- SMART AUTO-SELECTION ---
+                            if (cat === 'Deux-Roues') {
+                                const elCat = document.getElementById('v_cat');
+                                const elCarb = document.getElementById('v_carb');
+                                if (elCat) elCat.value = 'Motocycle';
+                                if (elCarb) elCarb.value = 'Essence';
+                            } else if (cat === 'Utilitaires & Poids Lourds') {
+                                const elCat = document.getElementById('v_cat');
+                                const elCarb = document.getElementById('v_carb');
+                                if (elCat) elCat.value = 'Bus et Camions';
+                                if (elCarb) elCarb.value = 'Diesel';
+                            } else if (cat && cat !== 'Divers') {
+                                const elCat = document.getElementById('v_cat');
+                                if (elCat) elCat.value = 'PP/Non Utilitaire';
+                            }
+
                             closeCarPicker();
-                            updateVrade();
-                            // Trigger input event for uppercase and save
+                            updateVvade();
+                            // Trigger events for saving and auto-collapse
                             input.dispatchEvent(new Event('input', { bubbles: true }));
+                            const elCat2 = document.getElementById('v_cat');
+                            if (elCat2) elCat2.dispatchEvent(new Event('change', { bubbles: true }));
                         });
                     }
 
@@ -2179,19 +2378,19 @@
 
 
                     window.handleEnter = function (e, el) {
-                        if (e.key === "Enter") { updateVrade(); el.blur(); }
+                        if (e.key === "Enter") { updateVvade(); el.blur(); }
                     }
 
                     window.syncMarketSlider = function (val) {
                         const slider = document.getElementById('v_market_boost');
                         slider.value = val;
-                        updateVrade();
+                        updateVvade();
                     }
 
                     window.syncMarketManual = function (val) {
                         const manual = document.getElementById('v_market_boost_manual');
                         manual.value = val;
-                        updateVrade();
+                        updateVvade();
                     }
 
                     window.finalizeFormat = function (el, rawId) {
@@ -2199,7 +2398,7 @@
                         let numeric = parseFloat(cleanVal) || 0;
                         document.getElementById(rawId).value = numeric;
                         el.value = formatFinance(numeric, false);
-                        updateVrade();
+                        updateVvade();
                     }
 
                     window.getTaux = function (annee, cat, p, carb) {
@@ -2230,7 +2429,7 @@
                             container.classList.remove('visible-section');
                             container.classList.add('hidden-section');
                         }
-                        updateVrade();
+                        updateVvade();
                     }
 
                     window.toggleTechReason = function () {
@@ -2254,7 +2453,7 @@
                             container.classList.remove('visible-section');
                             container.classList.add('hidden-section');
                         }
-                        updateVrade();
+                        updateVvade();
                     }
 
                     window.toggleEcoReason = function () {
@@ -2278,7 +2477,7 @@
                             container.classList.remove('visible-section');
                             container.classList.add('hidden-section');
                         }
-                        updateVrade();
+                        updateVvade();
                     }
 
                     // Nouvelle fonction pour récupérer les raisons cochées
@@ -2292,15 +2491,24 @@
                         return Array.from(checkboxes).map(cb => cb.value);
                     }
 
-                    window.updateVrade = function () {
+                    window.updateVvade = function () {
                         try {
                             // Using getElementById directly here is generally safe as these are core inputs, 
-                            // but for consistency we could check, though updateVrade runs often.
+                            // but for consistency we could check, though updateVvade runs often.
                             // Keeping it simple unless it breaks.
                             const elValDisplay = document.getElementById('v_valeur_display');
                             if (!elValDisplay) return; // Basic safety for onload
 
                             let valNeuve = parseFloat(elValDisplay.value.replace(/\s/g, '').replace(',', '.')) || 0;
+                            let fraisApp = parseFloat(document.getElementById('v_frais_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
+                            let valNette = Math.max(0, valNeuve - fraisApp);
+
+                            // Update displays
+                            const elValNette = document.getElementById('v_val_nette_display');
+                            if (elValNette) elValNette.value = formatFinance(valNette);
+                            document.getElementById('v_val_nette_raw').value = valNette;
+                            document.getElementById('v_frais_raw').value = fraisApp;
+
                             let montantDevis = parseFloat(document.getElementById('v_devis_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
                             let accordDevis = parseFloat(document.getElementById('v_accord_display').value.replace(/\s/g, '').replace(',', '.')) || 0;
 
@@ -2341,8 +2549,8 @@
                             if (valNeuve <= 0) return;
 
                             let tableRows = [];
-                            let labels = ["Neuf"];
-                            let plotData = [valNeuve];
+                            let labels = ["Neuf (Net)"];
+                            let plotData = [valNette];
 
                             // On ne lance la boucle que si les dates sont valides
                             let dmec = null;
@@ -2361,7 +2569,7 @@
                                     return; // On arrête tout
                                 }
 
-                                let valAct = valNeuve;
+                                let valAct = valNette;
                                 let dAnniv = new Date(dmec);
                                 // annee is already declared
 
@@ -2409,14 +2617,14 @@
                                     // Si aucune dépréciation (ex: dates identiques ou invalides), ValBase = ValNeuve
                                     // Ou alors on laisse 0 si dates pas saisies
                                     if (!isNaN(dmec.getTime()) && !isNaN(sinistre.getTime())) {
-                                        tableRows.push({ annee: 0, start: dmec, end: sinistre, t: 0, valDeb: valNeuve, perte: 0, valFin: valNeuve, jours: 0 });
+                                        tableRows.push({ annee: 0, start: dmec, end: sinistre, t: 0, valDeb: valNette, perte: 0, valFin: valNette, jours: 0 });
                                     }
                                 }
                             }
 
                             // If always empty (missing dates), use ValNeuve by default
-                            // so that the calculation displays something coherent (VRADE = ValNeuve) instead of 0
-                            let valBase = valNeuve;
+                            // so that the calculation displays something coherent (VVADE = ValNeuve) instead of 0
+                            let valBase = valNette;
                             let ageAnnees = 0;
 
                             if (tableRows.length > 0 && dmec && sinistre) {
@@ -2426,11 +2634,12 @@
 
                             let montantAdjKm = 0;
                             let montantAdjEntretien = 0;
+                            let ratioKm = 0; // Fix: Declare outside to be available for finalCalculation
 
                             if (useCorrectives) {
                                 const refKmAn = getReferenceKmPerYear(cat, carb);
                                 const kmTheorique = refKmAn * ageAnnees;
-                                let ratioKm = 0;
+
                                 if (kmCompteur !== null && kmTheorique > 0) {
                                     ratioKm = ((kmCompteur - kmTheorique) / kmTheorique) / 2;
                                 } else {
@@ -2465,7 +2674,7 @@
                             }
 
                             const marketValueAdded = valTechnique * (marketPercent / 100);
-                            const valFinale = valTechnique + marketValueAdded; // C'est la VRADE Finale
+                            const valFinale = valTechnique + marketValueAdded; // C'est la VVADE Finale
 
                             // Mise à jour UI Majoration
                             const dispMarketPercent = document.getElementById('market-percent-display');
@@ -2576,9 +2785,9 @@
                             }
 
                             // --- RE-INJECTION : DOM UPDATE FOR PRORATA TABLE (DASHBOARD) ---
-                            const vradeTableBody = document.getElementById('vradeTable');
-                            if (vradeTableBody) {
-                                vradeTableBody.innerHTML = tableRows.map(r => `
+                            const vvadeTableBody = document.getElementById('vvadeTable');
+                            if (vvadeTableBody) {
+                                vvadeTableBody.innerHTML = tableRows.map(r => `
                         <tr class="hover:bg-blue-50/50 transition-colors">
                             <td class="p-2 border-b border-slate-50 font-medium text-blue-900">An ${r.annee}</td>
                             <td class="p-2 border-b border-slate-50 text-center text-xs bg-slate-100/50 rounded-lg mx-2">${(r.t * 100).toFixed(0)}%</td>
@@ -2589,17 +2798,32 @@
 
                             tableDataForPDF = tableRows;
                             finalCalculation = {
-                                valBase: valBase,
+                                valBrut: valNeuve,
+                                valFrais: fraisApp,
+                                valBase: valNette,
                                 adjKm: montantAdjKm,
                                 adjEntretien: montantAdjEntretien,
                                 marketPercent: marketPercent,
                                 marketValueAdded: marketValueAdded,
-                                valFinale: valFinale, // VRADE
+                                valFinale: valFinale, // VVADE
                                 valTechnique: valTechnique, // Base + Correctifs (Sans marché)
                                 seuil: seuilReform,
                                 km: kmCompteur,
                                 useCorrectives: useCorrectives,
                                 accordDevis: accordDevis, // New prop
+
+                                // NEW: Storing rates for PDF display
+                                ratioKmPercent: (ratioKm * 100 * -1).toFixed(1), // Inverted logic: ratioKm is negative for gain, so * -1 to show positive % for gain? Wait.
+                                // Logic check: 
+                                // ratioKm > 0 (Real > Theo) => Malus => montantAdjKm = valBase * (-ratioKm) (Negative)
+                                // ratioKm < 0 (Real < Theo) => Bonus => montantAdjKm = valBase * (-ratioKm) (Positive)
+                                // So if ratioKm is 0.1 (10%), amount is -10%. We want to show "-10%". 
+                                // If ratioKm is -0.1 (-10%), amount is +10%. We want to show "+10%".
+                                // Let's store the signed percentage effectively applied.
+                                // The formula is valBase * (-ratioKm). 
+                                // So the effective rate is -ratioKm.
+                                rateKm: (-ratioKm * 100),
+                                rateEnt: entretienPercent,
 
                                 isTechReform: isTechReform,
                                 techReasons: selectedTechReasons,
@@ -2622,8 +2846,9 @@
                             safeSetText('kpi-vv-final', formatFinance(valFinale));
                             safeSetText('kpi-val-base', formatFinance(valBase));
 
-                            // 2. Dashboard : Impact Correctifs (Rouge si négatif)
-                            const totalImpact = montantAdjKm + montantAdjEntretien;
+                            // 2. Dashboard : Impact Global (Vétusté + Correctifs)
+                            const agingImpact = valBase - valNette;
+                            const totalImpact = agingImpact + montantAdjKm + montantAdjEntretien;
                             const impactEl = document.getElementById('kpi-impact-total');
                             if (impactEl) {
                                 const isNeg = totalImpact < 0;
@@ -2636,7 +2861,8 @@
 
                             // 3. Dashboard : Recap Table (Rouge si négatif pour l'impact)
                             safeSetText('dash_recap_val_neuf', formatFinance(valNeuve));
-                            safeSetText('dash_recap_val_base', formatFinance(valBase));
+                            safeSetText('dash_recap_frais', "- " + formatFinance(fraisApp));
+                            safeSetText('dash_recap_val_nette', formatFinance(valNette));
 
                             const dashRecapImpactEl = document.getElementById('dash_recap_impact');
                             if (dashRecapImpactEl) {
@@ -2695,7 +2921,7 @@
                                 if (pdfEntEl) pdfEntEl.style.color = "#000000";
                             }
 
-                            // 5. PDF : Recap Table Impact (Rouge si négatif)
+                            // 5. PDF : Recap Table Impact (Delta total depuis Valeur Nette)
                             const pdfRecapImpactEl = document.getElementById('pdf-recap-impact');
                             if (pdfRecapImpactEl) {
                                 const isNeg = totalImpact < 0;
@@ -2710,7 +2936,9 @@
                                 }
                             }
 
-                            safeSetText('pdf-recap-val-base', formatFinance(finalCalculation.valBase));
+                            safeSetText('pdf-recap-val-brut', formatFinance(finalCalculation.valBrut));
+                            safeSetText('pdf-recap-frais', "- " + formatFinance(finalCalculation.valFrais));
+                            safeSetText('pdf-recap-val-nette', formatFinance(finalCalculation.valBase));
                             safeSetText('pdf-recap-val-venale', formatFinance(finalCalculation.valTechnique));
                             safeSetText('pdf-recap-seuil', formatFinance(finalCalculation.seuil));
 
@@ -2795,15 +3023,29 @@
                             safeSetText('pdf-recap-expert-base', formatFinance(valBase));
 
                             const elKmRecap = document.getElementById('pdf-recap-expert-km');
+                            const elKmLabel = document.getElementById('pdf-recap-expert-km-label');
+
                             if (elKmRecap) {
                                 elKmRecap.innerText = (montantAdjKm > 0 ? "+" : "") + formatFinance(montantAdjKm);
                                 elKmRecap.style.color = montantAdjKm < 0 ? "#dc2626" : (montantAdjKm > 0 ? "#059669" : "#64748b");
                             }
+                            if (elKmLabel) {
+                                const rateKm = parseFloat(finalCalculation.rateKm || 0);
+                                const rateText = rateKm !== 0 ? ` <strong style="color: #64748b;">(${rateKm > 0 ? "+" : ""}${rateKm.toFixed(1)}%)</strong>` : "";
+                                elKmLabel.innerHTML = "Correctif Kilométrique" + rateText;
+                            }
 
                             const elEntRecap = document.getElementById('pdf-recap-expert-ent');
+                            const elEntLabel = document.getElementById('pdf-recap-expert-ent-label');
+
                             if (elEntRecap) {
                                 elEntRecap.innerText = (montantAdjEntretien > 0 ? "+" : "") + formatFinance(montantAdjEntretien);
                                 elEntRecap.style.color = montantAdjEntretien < 0 ? "#dc2626" : (montantAdjEntretien > 0 ? "#059669" : "#64748b");
+                            }
+                            if (elEntLabel) {
+                                const rateEnt = parseFloat(finalCalculation.rateEnt || 0);
+                                const rateText = rateEnt !== 0 ? ` <strong style="color: #64748b;">(${rateEnt > 0 ? "+" : ""}${rateEnt.toFixed(1)}%)</strong>` : "";
+                                elEntLabel.innerHTML = "Correctif Entretien" + rateText;
                             }
 
                             safeSetText('pdf-recap-expert-taux', (marketPercent > 0 ? "+" : "") + marketPercent + "%");
@@ -2942,13 +3184,13 @@
                                 plugins: [ChartDataLabels]
                             });
                         } catch (error) {
-                            console.error("Erreur dans updateVrade:", error);
+                            console.error("Erreur dans updateVvade:", error);
                             alert("Erreur de calcul : " + error.message);
                         }
                     };
 
                     // --- GÉNÉRATION DU RAPPORT PDF PREMIUM ---
-                    window.downloadExpertisePDF = function () {
+                    window.downloadExpertisePDF = function (mode = 'download') {
                         try {
                             if (typeof html2pdf === 'undefined') {
                                 alert("ERREUR CRITIQUE : La librairie HTML2PDF n'est pas chargée.");
@@ -2971,7 +3213,7 @@
                             const rawKmValue = (document.getElementById('v_km_compteur') ? document.getElementById('v_km_compteur').value.trim() : "0");
                             const refDossier = getInputValue('v_ref').trim();
 
-                            safeSetText('pdf-ref', refDossier || "VRADE-AUTOGEN");
+                            safeSetText('pdf-ref', refDossier || "VVADE-AUTOGEN");
                             safeSetText('pdf-type-dossier', document.getElementById('v_type_dossier').value);
 
                             // Garanties
@@ -3018,7 +3260,7 @@
                             safeSetText('pdf-date-now', new Date().toLocaleDateString('fr-FR'));
 
                             // Données financières
-                            safeSetText('pdf-val-neuve', formatFinance(parseFloat(getInputValue('v_valeur_raw', '0'))));
+                            safeSetText('pdf-val-neuve', formatFinance(parseFloat(getInputValue('v_val_nette_raw', '0'))));
                             safeSetText('pdf-devis', formatFinance(parseFloat(getInputValue('v_devis_raw', '0'))));
 
                             const accordVal = parseFloat(getInputValue('v_accord_raw', '0')) || 0;
@@ -3167,7 +3409,7 @@
 
                                         const opt = {
                                             margin: [dynamicTopMargin, 10, 25, 10],
-                                            filename: 'Expertise_BETCAM_' + filenameRef + '.pdf',
+                                            filename: filenameRef + '.pdf',
                                             image: { type: 'jpeg', quality: 1.0 },
                                             html2canvas: { scale: 4, useCORS: true, scrollY: 0, logging: false },
                                             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -3178,6 +3420,14 @@
 
                                         html2pdf().from(pdfTemplate).set(opt).toPdf().get('pdf').then(function (pdf) {
                                             if (loadingSubtext) loadingSubtext.innerText = "Calcul des pages et des entêtes...";
+
+                                            // Définition du titre du document (pour l'aperçu et le nom par défaut)
+                                            pdf.setProperties({
+                                                title: filenameRef,
+                                                subject: 'Expertise Automobiles - BETCAM',
+                                                author: 'Cabinet BETCAM'
+                                            });
+
                                             const tp = pdf.internal.getNumberOfPages();
                                             const pW = pdf.internal.pageSize.getWidth();
                                             const pH = pdf.internal.pageSize.getHeight();
@@ -3237,7 +3487,15 @@
                                                 pdf.text("E-mail: betcam01@gmail.com - RC: 29915 - Patente: 17318252 - CNSS: 8258875 - IF: 40147134 - ICE: 0014 3853 0000 042", pW / 2, pH - 6, { align: 'center' });
                                             }
                                             return pdf;
-                                        }).save().then(() => {
+                                        }).then(pdf => {
+                                            if (mode === 'preview') {
+                                                const blobUrl = pdf.output('bloburl');
+                                                window.open(blobUrl, '_blank');
+                                                return;
+                                            } else {
+                                                return pdf.save(filenameRef + '.pdf');
+                                            }
+                                        }).then(() => {
                                             if (loadingSubtext) loadingSubtext.innerText = "Finalisation...";
                                             setTimeout(() => {
                                                 restoreUI();
@@ -3331,7 +3589,7 @@
                         }
                     }
 
-                    window.onload = updateVrade;
+
 
                     // --- AUTO-SAVE / RESTORE (USER REQUEST) ---
                     function saveField(el) {
@@ -3392,9 +3650,9 @@
                         }
 
                         try {
-                            updateVrade();
+                            updateVvade();
                         } catch (e) {
-                            console.warn("Auto-restore: updateVrade failed", e);
+                            console.warn("Auto-restore: updateVvade failed", e);
                         }
                     }
 
@@ -3465,7 +3723,7 @@
                             saveField(rawEl); // CRITICAL: Save the hidden field
                         }
                         saveField(el); // Save the display field
-                        // updateVrade is usually called by the oninput attribute: oninput="handleInput(...); updateVrade()"
+                        // updateVvade is usually called by the oninput attribute: oninput="handleInput(...); updateVvade()"
                     };
 
                     // Safety: Save all on unload
@@ -3527,7 +3785,7 @@
                                 'REQ': 'v_requerant', 'GAR': 'v_garage', 'GENR': 'v_genre',
                                 'CAR': 'v_marque_modele', 'DEXP': 'v_date_expertise',
                                 'DMIS': 'v_date_reception', 'DSIN': 'v_sinistre', 'DMEC': 'v_dmec',
-                                'VNEU': 'v_valeur_display', 'DEVI': 'v_devis_display', 'ACCO': 'v_accord_display',
+                                'VNEU': 'v_valeur_display', 'FRAS': 'v_frais_display', 'DEVI': 'v_devis_display', 'ACCO': 'v_accord_display',
                                 'KM': 'v_km_compteur', 'ENT': 'v_entretien', 'CHK': 'chk_correctives',
                                 'MKT': 'v_market_boost'
                             };
@@ -3584,8 +3842,9 @@
                                     }
                                 }
                             });
-                            updateVrade();
-                            alert("Rapport importé avec succès (Mode SmartData) !");
+                            updateVvade();
+                            if (window.checkAllAutoCollapses) window.checkAllAutoCollapses();
+                            alert("Rapport importé avec succès (Analyse Intelligente) !");
                             return;
                         }
 
@@ -3600,12 +3859,16 @@
                             { id: 'v_cie_adverse', regex: /(?:Cie|Assurance)\s*Adverse\s*[:\-]?\s*([^:\n|]+)/i },
                             { id: 'v_nom_assure', regex: /(?:Assuré|Nom)\s*[:\-]?\s*([^:\n|]+)/i },
                             { id: 'v_mat', regex: /(?:Immatriculation|MAT|N°\s*Immat)\s*[:\-]?\s*([^\s\n|]+)/i },
+                            { id: 'v_vin', regex: /(?:VIN|Châssis|N°\s*CHASSIS)\s*[:\-]?\s*([^\s\n|]+)/i },
                             { id: 'v_marque_modele', regex: /(?:Marque\s*\/\s*Modèle|Véhicule)\s*[:\-]?\s*([^:\n|]+)/i },
+                            { id: 'v_requerant', regex: /Requérant\s*[:\-]?\s*([^:\n|]+)/i },
+                            { id: 'v_garage', regex: /Garage\s*[:\-]?\s*([^:\n|]+)/i },
                             { id: 'v_cat', regex: /Catégorie\s*[:\-]?\s*([^:\n|]+)/i },
                             { id: 'v_pf', regex: /Puissance\s*Fiscale\s*[:\-]?\s*(\d+)/i },
                             { id: 'v_carb', regex: /Énergie\s*[:\-]?\s*([^:\n|]+)/i },
                             { id: 'v_km_compteur', regex: /Kilométrage\s*[:\-]?\s*([\d\s]+)/i },
                             { id: 'v_entretien', regex: /Correctif\s*Entretien\s*[:\-]?\s*([\+\-]?\d+)/i },
+
                             { id: 'v_date_expertise', regex: /(?:Date\s*)?Expertise\s*[:\-]?\s*(\d{2}\/\d{2}\/\d{4})/i, isDate: true },
                             { id: 'v_date_reception', regex: /Date\s*(?:MISSION|Réception)\s*[:\-]?\s*(\d{2}\/\d{2}\/\d{4})/i, isDate: true },
                             { id: 'v_sinistre', regex: /Date\s*(?:du\s*)?Sinistre\s*[:\-]?\s*(\d{2}\/\d{2}\/\d{4})/i, isDate: true },
@@ -3668,7 +3931,8 @@
                         });
 
                         if (foundAny) {
-                            updateVrade();
+                            updateVvade();
+                            if (window.checkAllAutoCollapses) window.checkAllAutoCollapses();
                             alert(`Succès : ${foundCount} informations extraites via analyse textuelle !`);
                         } else {
                             const anyDates = text.match(/\d{2}\/\d{2}\/\d{4}/g);
@@ -3685,6 +3949,11 @@
                     // --- AUTO-COLLAPSE LOGIC ---
                     const autoCollapseConfig = [
                         {
+                            contentId: 'ident-content',
+                            iconId: 'icon-ident',
+                            fields: ['v_ref', 'v_num_sinistre', 'v_nom_assure', 'v_cie_assurance']
+                        },
+                        {
                             contentId: 'garanties-content',
                             iconId: 'icon-garanties',
                             fields: ['gar_rc', 'gar_bdg', 'gar_vol', 'gar_incendie', 'gar_dommages_tout', 'gar_dommages_coll'],
@@ -3694,7 +3963,7 @@
                         {
                             contentId: 'vehicule-content',
                             iconId: 'icon-vehicule',
-                            fields: ['v_marque_modele', 'v_mat', 'v_dmec', 'v_carb']
+                            fields: ['v_marque_modele', 'v_mat', 'v_vin', 'v_dmec', 'v_genre', 'v_cat', 'v_pf', 'v_carb']
                         },
                         {
                             contentId: 'chrono-content',
@@ -3704,12 +3973,12 @@
                         {
                             contentId: 'photo-content',
                             iconId: 'icon-photo',
-                            fields: ['v_photo_base64'] // Checks hidden input populated by upload
+                            fields: ['v_photo_base64']
                         },
                         {
                             contentId: 'finance-content',
                             iconId: 'icon-finance',
-                            fields: ['v_valeur_display', 'v_devis_display'] // Checks display inputs
+                            fields: ['v_valeur_display', 'v_devis_display']
                         }
                     ];
 
@@ -3737,6 +4006,7 @@
 
                     window.toggleAllSections = function () {
                         const sections = [
+                            { id: 'ident-content', icon: 'icon-ident' },
                             { id: 'garanties-content', icon: 'icon-garanties' },
                             { id: 'vehicule-content', icon: 'icon-vehicule' },
                             { id: 'chrono-content', icon: 'icon-chrono' },
@@ -3786,32 +4056,48 @@
 
                     let autoCollapseTimers = {};
 
+                    window.checkAllAutoCollapses = function () {
+                        autoCollapseConfig.forEach(config => checkAndCollapse(config));
+                    };
+
                     function initAutoCollapse() {
                         autoCollapseConfig.forEach(config => {
                             const inputs = config.fields.map(id => document.getElementById(id)).filter(el => el);
 
                             inputs.forEach(input => {
-                                const eventType = (input.type === 'text' || input.type === 'date' || input.type === 'number') ? 'blur' : 'change';
+                                // Support both 'blur' (manual completion) and 'input' (programmatic/live updates)
+                                const events = (input.type === 'text' || input.type === 'date' || input.type === 'number') ? ['blur', 'input'] : ['change'];
 
                                 if (input.type === 'hidden') {
                                     if (config.contentId === 'finance-content') {
                                         const displayId = input.id.replace('_raw', '_display');
                                         const displayEl = document.getElementById(displayId);
-                                        if (displayEl) displayEl.addEventListener('blur', () => setTimeout(() => checkAndCollapse(config), 200));
+                                        if (displayEl) {
+                                            displayEl.addEventListener('blur', () => setTimeout(() => checkAndCollapse(config), 200));
+                                            displayEl.addEventListener('input', () => setTimeout(() => checkAndCollapse(config), 500));
+                                        }
                                     }
                                     else if (config.contentId === 'photo-content') {
                                         const fileInput = document.getElementById('v_photo_input');
                                         if (fileInput) fileInput.addEventListener('change', () => setTimeout(() => checkAndCollapse(config), 500));
-                                        const clearBtn = document.querySelector('button[onclick="clearPhoto()"]');
-                                        if (clearBtn) clearBtn.addEventListener('click', () => { /* Do nothing */ });
                                     }
                                 } else {
-                                    input.addEventListener(eventType, () => {
-                                        if (config.strategy === 'debounce_any_checked') {
-                                            handleDebounceLogic(config);
-                                        } else {
-                                            checkAndCollapse(config);
-                                        }
+                                    events.forEach(evName => {
+                                        input.addEventListener(evName, () => {
+                                            // debounce slightly for 'input' to avoid collapsing while typing
+                                            const delay = (evName === 'input' && input.tagName !== 'SELECT') ? 1200 : 0;
+
+                                            const timerKey = config.contentId + input.id + evName;
+                                            if (autoCollapseTimers[timerKey]) clearTimeout(autoCollapseTimers[timerKey]);
+
+                                            autoCollapseTimers[timerKey] = setTimeout(() => {
+                                                if (config.strategy === 'debounce_any_checked') {
+                                                    handleDebounceLogic(config);
+                                                } else {
+                                                    checkAndCollapse(config);
+                                                }
+                                            }, delay);
+                                        });
                                     });
                                 }
                             });
@@ -3868,9 +4154,9 @@
 
                     window.onload = function () {
                         try {
-                            updateVrade();
+                            updateVvade();
                         } catch (e) {
-                            console.error("Error in updateVrade:", e);
+                            console.error("Error in updateVvade:", e);
                         }
 
                         try {
@@ -3914,7 +4200,7 @@
                                     <h3 class="text-lg font-black leading-6 text-white uppercase tracking-widest"
                                         id="modal-title">
                                         <i class="fa-solid fa-scale-balanced mr-2 text-blue-400"></i> Guide
-                                        Méthodologique VRADE
+                                        Méthodologique VVADE
                                     </h3>
                                     <button type="button" onclick="window.closeGuide()"
                                         class="rounded-full p-1 text-slate-400 hover:text-white hover:bg-white/10 transition-colors focus:outline-none">
@@ -3933,12 +4219,38 @@
                                     <div class="mb-8 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg">
                                         <p class="text-sm text-blue-900 font-medium">
                                             Ce guide détaille les formules mathématiques et les critères techniques
-                                            utilisés par le <strong>Cabinet BETCAM</strong> pour déterminer la Valeur de
-                                            Remplacement à Dire d'Expert (VRADE).
+                                            utilisés par le <strong>Cabinet BETCAM</strong> pour déterminer la
+                                            Valeur Vénale à Dire d'Expert (VVADE).
                                         </p>
                                     </div>
 
                                     <div class="space-y-10">
+
+                                        <!-- 0. BASE DE CALCUL -->
+                                        <section>
+                                            <h4
+                                                class="flex items-center text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                                                <span class="bg-rose-100 text-rose-600 px-2 py-1 rounded mr-2">00</span>
+                                                Base de Calcul (Valeur Nette)
+                                            </h4>
+                                            <div class="bg-rose-50/50 p-5 rounded-xl border border-rose-100 italic">
+                                                <p class="text-xs text-rose-900 leading-relaxed">
+                                                    Conformément aux règles d'expertise, la base de calcul de la vétusté
+                                                    doit être la <strong>Valeur Nette</strong> du véhicule.
+                                                    Les <strong>frais d'immatriculation</strong> (taxe de luxe, carte
+                                                    grise) et les <strong>frais de dossier</strong>
+                                                    ne sont pas pris en compte pour la détermination de la VVADE car ils
+                                                    représentent des taxes et services consommés,
+                                                    et non une valeur intrinsèque du matériel.
+                                                </p>
+                                                <div class="mt-3 flex justify-center">
+                                                    <code
+                                                        class="bg-white px-3 py-1.5 rounded-lg border border-rose-200 text-xs font-bold text-rose-700">
+                                                        Base VVADE = Prix d'Achat Brût - Frais Annexes
+                                                    </code>
+                                                </div>
+                                            </div>
+                                        </section>
 
                                         <!-- 1. DÉPRÉCIATION -->
                                         <section>
@@ -4159,15 +4471,56 @@
                                             </div>
                                         </section>
 
+                                        <!-- 4. DÉCISION DE RÉFORME -->
+                                        <section>
+                                            <h4
+                                                class="flex items-center text-sm font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">
+                                                <span
+                                                    class="bg-amber-100 text-amber-600 px-2 py-1 rounded mr-2">04</span>
+                                                Décision de Réforme
+                                            </h4>
+                                            <div class="space-y-4">
+                                                <p class="text-xs text-slate-600 leading-relaxed">
+                                                    Le système compare automatiquement le coût des réparations (Devis ou
+                                                    Accord) à la valeur vénale calculée pour proposer une décision
+                                                    technique et économique.
+                                                </p>
+                                                <div class="grid md:grid-cols-2 gap-4">
+                                                    <div
+                                                        class="bg-emerald-50/50 p-3 rounded-lg border border-emerald-100">
+                                                        <h6
+                                                            class="text-[10px] font-bold text-emerald-800 uppercase mb-1">
+                                                            Dossier Réparable</h6>
+                                                        <p class="text-[10px] text-emerald-700">Si Devis < 2/3 de la
+                                                                VVADE. Le véhicule est remis en état.</p>
+                                                    </div>
+                                                    <div class="bg-rose-50/50 p-3 rounded-lg border border-rose-100">
+                                                        <h6 class="text-[10px] font-bold text-rose-800 uppercase mb-1">
+                                                            Dossier en Réforme</h6>
+                                                        <p class="text-[10px] text-rose-700">Si Devis > 2/3 de la VVADE
+                                                            (ou 100% selon option). Le véhicule est déclassé (VHU).</p>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-center">
+                                                    <span
+                                                        class="text-[10px] font-bold text-slate-500 uppercase mr-2">Calcul
+                                                        du Seuil :</span>
+                                                    <code
+                                                        class="text-[11px] font-bold text-slate-800">Seuil = VVADE × 66.6% (2/3)</code>
+                                                </div>
+                                            </div>
+                                        </section>
+
                                     </div>
 
                                     <!-- Footer Formule Globale -->
                                     <div class="mt-8 pt-6 border-t border-slate-100 text-center">
                                         <h5 class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-3">
-                                            Formule de Synthèse VRADE</h5>
+                                            Formule de Synthèse VVADE</h5>
                                         <div
                                             class="inline-block bg-slate-900 text-white px-6 py-3 rounded-full shadow-lg shadow-slate-200">
-                                            <span class="font-mono text-sm font-bold">VRADE = (Base × Dépréciation) ±
+                                            <span class="font-mono text-sm font-bold">VVADE = (Base × Dépréciation) ±
                                                 Correctifs + Ajustement Expert</span>
                                         </div>
                                     </div>
@@ -4175,9 +4528,9 @@
                                 </div>
 
                                 <!-- Footer Actions -->
-                                <div class="bg-slate-50 px-6 py-4 flex justify-end">
+                                <div class="bg-slate-100 px-6 py-4 flex justify-center border-t border-slate-200">
                                     <button type="button" onclick="window.closeGuide()"
-                                        class="inline-flex justify-center rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 uppercase tracking-wide transition-all">
+                                        class="h-10 px-8 rounded-xl bg-slate-700 text-white text-[10px] font-black shadow-md hover:bg-slate-800 uppercase tracking-[0.2em] transition-all active:scale-95">
                                         Fermer le guide
                                     </button>
                                 </div>
